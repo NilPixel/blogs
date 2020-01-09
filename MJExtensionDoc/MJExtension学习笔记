@@ -1,0 +1,1043 @@
+=== MJExtension学习笔记
+MJExtension是李明杰老师的MJ系列框架里面的一员，能够实现一行代码将服务端拿到的数据在字典和模型间相互转换的功能。
+最近这几天，学习了一下MJExtension的源码，在这里做一下简单的记录。
+
+==== 使用
+
+- [red]#字典转模型#
+
+一般，我们从服务端拿到的数据都是这样的：
+---------------
+HTTP result: {
+    code = 0;
+    desc = "\U64cd\U4f5c\U6210\U529f";
+    page = 1;
+    records = 97;
+    rows =     (
+                {
+            msgContent = ewrwerwrweew;
+            msgId = efa75abe5c824a00b4b1fbbaf59aa676;
+            msgStatus = 1;
+            msgTitle = wqeqwrwqr;
+            msgType = 0;
+            sentTime = 1478657389000;
+        },
+                {
+            msgContent = wetwetqwterqwer;
+            msgId = 9ff862ee4927444c9af203c8326021ce;
+            msgStatus = 1;
+            msgTitle = asrfwerwer;
+            msgType = 0;
+            sentTime = 1478657370000;
+        },
+---------------
+想获取上面json中的rows数组中的数据，如果不用MJExtension来解析数据的话，我们一般是这样处理的，先定义一个model：
+---------------
+#import "MMDModel.h"
+
+@interface MMDMessageListModel : MMDModel
+
+@property (nonatomic, copy) NSString *msgId;
+@property (nonatomic, copy) NSString *msgTitle;
+@property (nonatomic, copy) NSString *msgContent;
+@property (nonatomic, copy) NSString *msgType;
+@property (nonatomic, assign) NSTimeInterval sentTime;
+@property (nonatomic, copy) NSString *msgStatus;
+---------------
+然后再定义一个这个model的初始化方法：
+---------------
+- (instancetype)initWithDict:(NSDictionary *)result;
+---------------
+然后像下面这样实现这个初始化方法：
+---------------
+#import "MMDMessageListModel.h"
+
+@implementation MMDMessageListModel
+
+- (instancetype)initWithDict:(NSDictionary *)result {
+    if (self = [super init]) {
+        _msgId = [MMDStringUtils isNullOrEmpty:result[@"msgId"]]?@"--":result[@"msgId"];
+        _msgTitle = [MMDStringUtils isNullOrEmpty:result[@"msgTitle"]]?@"--":result[@"msgTitle"];
+        _msgContent = [MMDStringUtils isNullOrEmpty:result[@"msgContent"]]?@"--":result[@"msgContent"];
+        _msgType = [MMDStringUtils isNullOrEmpty:result[@"msgType"]]?@"--":result[@"msgType"];
+        _sentTime = (!result[@"sentTime"] || [result [@"sentTime"] isMemberOfClass:[NSNull class]])?0:[result [@"sentTime"] longLongValue];
+        _msgStatus = [MMDStringUtils isNullOrEmpty:result[@"msgStatus"]]?@"--":result[@"msgStatus"];
+    }
+    return self;
+}
+---------------
+然后在服务器返回的数据中用for循环将rows中的每个字典转换成自定义的model拿出来用：
+---------------
+NSMutableArray *rows = [NSMutableArray array];
+                NSArray *tempArray = result.result[@"rows"];
+                for (int i = 0; i < tempArray.count; i++) {
+                    MMDMessageListModel *model = [[MMDMessageListModel alloc] initWithDict:tempArray[i]];
+                    [rows addObject:model];
+                }
+---------------
+从上面的代码我们看出，普通的将json转成model的转换方法里我们要写各种判空，是不是很大一坨代码？是不是看起来很烦？OK，有了MJExtension之后
+我们就可以告别这一坨坨的代码了，一句话就可以搞定！
+废话不多说，上代码：
+---------------
+@interface MMDMessageListModel : NSObject
+
+@property (nonatomic, copy) NSString *msgId;
+@property (nonatomic, copy) NSString *msgTitle;
+@property (nonatomic, copy) NSString *msgContent;
+@property (nonatomic, copy) NSString *msgType;
+@property (nonatomic, assign) NSTimeInterval sentTime;
+@property (nonatomic, copy) NSString *msgStatus;
+
+@end
+---------------
+model还是要定义的，不过不需要定义初始化方法了，只需要定义和服务端想转换成模型的字典里的key值一样的属性就行了。如果还想更偷懒一点，可以用插件直接生成model，
+拿来就可以用。
+上面那一段json结构属于模型里嵌套数组，然后数组里又包含着模型的样式。所以这里我们需要定义两个模型，除了上面的MMDMessageListModel，还需要定义整个返回值的model
+MMDMessageResultModel，如下所示：
+---------------
+@interface MMDMessageResultModel : NSObject
+
+@property (nonatomic, copy) NSString *code;
+@property (nonatomic, copy) NSString *desc;
+@property (nonatomic, assign) int page;
+@property (nonatomic, strong) NSArray<MMDMessageListModel *> *rows;
+@property (nonatomic, assign) int total;
+@property (nonatomic, assign) int records;
+
+@end
+---------------
+然后implement里面要重写一下mj_objectClassInArray方法，指定一下rows数组里需要解析的model类型：
+---------------
+@implementation MMDMessageResultModel
+
++ (NSDictionary *)mj_objectClassInArray {
+    return @{@"rows":@"MMDMessageListModel"};
+}
+
+@end
+---------------
+然后，在拿到服务端数据时就可以这样操作了：
+---------------
+MMDMessageResultModel *resultModel = [MMDMessageResultModel mj_objectWithKeyValues:responseCache];
+---------------
+上面是在项目中用到的例子，属于：[blue]#模型中包含数组属性，数组里面又要装着其他模型#类型的。除此之外还有其他情况：
+
+[blue]#【最简单的字典转模型】#
+---------------
+NSDictionary *dic = @{@"name":@"jack",
+                      @"age":@20,
+                      @"height":@185,
+                      @"sex":@(Sexs_Male)};
+User *user = [User mj_objectWithKeyValues:dic];
+NSLog(@"【最简单的字典转模型】user.name = %@ user.age = %ld user.height = %ld user.sex = %ld",user.name,user.age,user.height,user.sex);
+---------------
+[blue]#【JSON字符串转模型】#
+---------------
+NSString *jsonStr = @"{\"name\":\"LUCY\", \"age\":25, \"height\":175, \"sex\":2}";
+    user = [User mj_objectWithKeyValues:jsonStr];
+    NSLog(@"【JSON字符串转模型】user.name = %@ user.age = %ld user.height = %ld user.sex = %ld",user.name,user.age,user.height,user.sex);
+---------------
+[blue]#【模型中嵌套模型】#
+---------------
+NSDictionary *modelContainsModelDic = @{@"content":@"超市酒水类消费账单",
+                      @"user":@{@"name":@"Tom",
+                                @"age":@23,
+                                @"height":@178,
+                                @"sex":@1},
+                      @"bill":@{@"content":@"超市海鲜类消费账单",
+                                @"user":@{@"name":@"Jerry",
+                                          @"age":@28,
+                                          @"height":@175,
+                                          @"sex":@1}}
+                      };
+Bill *bill = [Bill mj_objectWithKeyValues:modelContainsModelDic];
+NSLog(@"【模型中嵌套模型】bill.content = %@, bill.user.name = %@, bill.bill.content = %@, bill.bill.user.name = %@",bill.content, bill.user.name,bill.bill.content, bill.bill.user.name);
+---------------
+[blue]#【模型中的属性名和字典中的key不相同(或者需要多级映射)】#
+---------------
+[Student mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+    return @{
+             @"ID":@"id",
+             @"desc":@"description",
+             @"oldName":@"name.oldName",
+             @"nowName":@"name.nowName",
+             @"phone":@"other.phone",
+             @"nameChangedTime":@"name.info[1].nameChangedTime"
+             };
+}];
+NSDictionary *ModelNameJSONKeyMappingDic = @{@"id":@"20",
+                                             @"description":@"khkjdahkaskda",
+                                             @"name":@{
+                                                     @"nowName":@"tom",
+                                                     @"oldName":@"jerry",
+                                                     @"info":@[@"test",
+                                                               @{
+                                                                  @"nameChangedTime":@"2015-09-09"
+                                                                }
+                                                               ]
+                                                     },
+                                             @"other":@{
+                                                     @"phone":@{
+                                                             @"name":@"iphone",
+                                                             @"price":@1234
+                                                             }
+                                                     }
+                                             };
+Student *stu = [Student mj_objectWithKeyValues:ModelNameJSONKeyMappingDic];
+NSLog(@"【模型中的属性名和字典中的key不相同(或者需要多级映射)】stu.ID = %@, stu.desc = %@, stu.oldName = %@, stu.nowName = %@, stu.phone.name = %@,stu.nameChangedTime = %@",stu.ID,stu.desc,stu.oldName,stu.nowName,stu.phone.name ,stu.nameChangedTime);
+---------------
+[blue]#【将一个字典数组转成模型数组】#
+---------------
+NSArray *dicArray = @[
+                      @{
+                        @"name":@"iphone4",
+                        @"price":@1234
+                          },
+                      @{
+                          @"name":@"iphone4s",
+                          @"price":@12345
+                          },
+                      @{
+                          @"name":@"iphone5",
+                          @"price":@12346
+                          },
+                      @{
+                          @"name":@"iphone5s",
+                          @"price":@12347
+                          },
+                      @{
+                          @"name":@"iphone6",
+                          @"price":@12348
+                          }
+                      ];
+NSArray *phoneArray = [Phone mj_objectArrayWithKeyValuesArray:dicArray];
+for (Phone *phone in phoneArray) {
+    NSLog(@"【将一个字典数组转成模型数组】phone.name = %@, phone.price = %lf",phone.name,phone.price);
+}
+---------------
+
+一句话就可以把所有数据都转换成想要的model类型了，这么狂拽酷炫屌炸天的效果是如何实现的呢？下面我们就一点点分析，到底怎么来的。
+
+==== 底层
+我们先看一下底层的整个组织框架是怎样的： +
+类依赖图：
+[caption="Figure 2: "]
+image:../MJExtensionDoc/664334-14b80127b4e16a56.png[类依赖图]
+
+组织架构图：
+[caption="Figure 2: "]
+image:../MJExtensionDoc/MJExtension.png[MJExtension]
+
+从入口方法开始执行的流程图：
+[caption="Figure 2: "]
+image:../MJExtensionDoc/入口方法流程图.png[MJExtensionMain]
+
+这么多类是不是看的眼花缭乱？下面我们来一个一个的分析：
+
+- [red]#MJExtensionConst#
+
+这个类里定义了整个库的常量和宏定义，类似于一个项目中的预编译文件。
+包含了方法弃用宏，自定义Log日志、自定义断言、快速打印所有属性、自定义类型编码字符串常量。
+
+- 标注过期的宏定义
+---------------
+// 过期
+#define MJExtensionDeprecated(instead) NS_DEPRECATED(2_0, 2_0, 2_0, 2_0, instead)
+---------------
+- 编译错误的断言
+---------------
+// 构建错误
+#define MJExtensionBuildError(clazz, msg) \
+NSError *error = [NSError errorWithDomain:msg code:250 userInfo:nil]; \
+[clazz setMj_error:error];
+---------------
+- 宏定义日志打印方法
+---------------
+// 日志输出
+#ifdef DEBUG
+#define MJExtensionLog(...) NSLog(__VA_ARGS__)
+#else
+#define MJExtensionLog(...)
+#endif
+---------------
+- 作条件判断并根据判断结果返回对应的值和消息的断言
+---------------
+/**
+ * 断言
+ * @param condition   条件
+ * @param returnValue 返回值
+ * @param clazz 当前类类型
+ * @param msg 返回消息
+ */
+#define MJExtensionAssertError(condition, returnValue, clazz, msg) \
+[clazz setMj_error:nil]; \
+if ((condition) == NO) { \
+    MJExtensionBuildError(clazz, msg); \
+    return returnValue;\
+}
+
+/**
+ * 断言
+ * @param condition   条件
+ * @param returnValue 返回值
+ */
+#define MJExtensionAssert2(condition, returnValue) \
+if ((condition) == NO) return returnValue;
+
+/**
+ * 断言
+ * @param condition   条件
+ */
+#define MJExtensionAssert(condition) MJExtensionAssert2(condition, )
+
+/**
+ * 断言
+ * @param param         参数
+ * @param returnValue   返回值
+ */
+#define MJExtensionAssertParamNotNil2(param, returnValue) \
+MJExtensionAssert2((param) != nil, returnValue)
+
+/**
+ * 断言
+ * @param param   参数
+ */
+#define MJExtensionAssertParamNotNil(param) MJExtensionAssertParamNotNil2(param, )
+---------------
+- 打印所有属性的断言
+---------------
+/**
+ * 打印所有的属性
+ */
+#define MJLogAllIvars \
+-(NSString *)description \
+{ \
+    return [self mj_keyValues].description; \
+}
+#define MJExtensionLogAllProperties MJLogAllIvars
+---------------
+- 定义了属性类型，大致根据名称就知道符号代表什么类型的参数
+---------------
+/**
+ *  成员变量类型（属性类型）
+ */
+NSString *const MJPropertyTypeInt = @"i";
+NSString *const MJPropertyTypeShort = @"s";
+NSString *const MJPropertyTypeFloat = @"f";
+NSString *const MJPropertyTypeDouble = @"d";
+NSString *const MJPropertyTypeLong = @"l";
+NSString *const MJPropertyTypeLongLong = @"q";
+NSString *const MJPropertyTypeChar = @"c";
+NSString *const MJPropertyTypeBOOL1 = @"c";
+NSString *const MJPropertyTypeBOOL2 = @"b";
+NSString *const MJPropertyTypePointer = @"*";
+
+NSString *const MJPropertyTypeIvar = @"^{objc_ivar=}";
+NSString *const MJPropertyTypeMethod = @"^{objc_method=}";
+NSString *const MJPropertyTypeBlock = @"@?";
+NSString *const MJPropertyTypeClass = @"#";
+NSString *const MJPropertyTypeSEL = @":";
+NSString *const MJPropertyTypeId = @"@";
+---------------
+- [red]#MJFoundation#
+
+这个类做的事情就是判断类是不是属于Foundation框架里面的。可能很好奇如何判断这个类是不是Foundation框架呢。
+这里用的是穷举法，由于框架里面的类太多。这里就把最后常用的几个类进行判断。如下：
+---------------
++ (NSSet *)foundationClasses
+{
+    if (foundationClasses_ == nil) {
+        // 集合中没有NSObject，因为几乎所有的类都是继承自NSObject，具体是不是NSObject需要特殊判断
+        foundationClasses_ = [NSSet setWithObjects:
+                              [NSURL class],
+                              [NSDate class],
+                              [NSValue class],
+                              [NSData class],
+                              [NSError class],
+                              [NSArray class],
+                              [NSDictionary class],
+                              [NSString class],
+                              [NSAttributedString class], nil];
+    }
+    return foundationClasses_;
+}
+---------------
+然后进行判断
+---------------
++ (BOOL)isClassFromFoundation:(Class)c
+{
+    if (c == [NSObject class] || c == [NSManagedObject class]) return YES;
+
+    __block BOOL result = NO;
+    [[self foundationClasses] enumerateObjectsUsingBlock:^(Class foundationClass, BOOL *stop) {
+        if ([c isSubclassOfClass:foundationClass]) {
+            result = YES;
+            *stop = YES;
+        }
+    }];
+    return result;
+}
+---------------
+- [red]#NSString+MJExtension#
+
+这个类作用就是对字符串的一些操作，比如变量的命名方法转换。
+常见的驼峰转下划线（loveYou -> love_you）、下划线转驼峰（love_you -> loveYou）、首字母变大写、首字母变小写、是不是整形、是不是URL格式。
+其实就是一个工具分类，操作变量或者属性名。方法就这么几个：
+---------------
+/**
+ *  驼峰转下划线（loveYou -> love_you）
+ */
+- (NSString *)mj_underlineFromCamel;
+/**
+ *  下划线转驼峰（love_you -> loveYou）
+ */
+- (NSString *)mj_camelFromUnderline;
+/**
+ * 首字母变大写
+ */
+- (NSString *)mj_firstCharUpper;
+/**
+ * 首字母变小写
+ */
+- (NSString *)mj_firstCharLower;
+
+- (BOOL)mj_isPureInt;
+
+- (NSURL *)mj_url;
+---------------
+- [red]#MJPropertyType#
+
+这个类的功能是对属性的具体类型进行封装，简单来说就是将类型编码转为我们熟知的类型。
+暴露给外面使用，其属性如下：
+---------------
+/**
+ *  包装一种类型
+ */
+@interface MJPropertyType : NSObject
+/** 类型标识符 */
+@property (nonatomic, copy) NSString *code;
+
+/** 是否为id类型 */
+@property (nonatomic, readonly, getter=isIdType) BOOL idType;
+
+/** 是否为基本数字类型：int、float等 */
+@property (nonatomic, readonly, getter=isNumberType) BOOL numberType;
+
+/** 是否为BOOL类型 */
+@property (nonatomic, readonly, getter=isBoolType) BOOL boolType;
+
+/** 对象类型（如果是基本数据类型，此值为nil） */
+@property (nonatomic, readonly) Class typeClass;
+
+/** 类型是否来自于Foundation框架，比如NSString、NSArray */
+@property (nonatomic, readonly, getter = isFromFoundation) BOOL fromFoundation;
+/** 类型是否不支持KVC */
+@property (nonatomic, readonly, getter = isKVCDisabled) BOOL KVCDisabled;
+---------------
+通过类方法+ (instancetype)cachedTypeWithCode:(NSString *)code； 初始化。
+因为总共的类型就如上提到的那几种，所以这里用了一个静态的字典保存结果。
+---------------
+static NSMutableDictionary *types_;// 静态字典
++ (void)initialize
+{
+    types_ = [NSMutableDictionary dictionary];
+}
+---------------
+下次直接从结果中取，如果有则不用依次判断了。缓存实现如下：
+---------------
++ (instancetype)cachedTypeWithCode:(NSString *)code
+{
+    MJExtensionAssertParamNotNil2(code, nil);
+
+    // 从缓存中取，如果没有才去设置
+    MJPropertyType *type = types_[code];
+    if (type == nil) {
+        type = [[self alloc] init];
+        type.code = code;
+        // 存储起来
+        types_[code] = type;
+    }
+    return type;
+}
+---------------
+和一般缓存的思路一样：在第一次使用的时候保存结果，
+如果以后有相同的情况则直接从以前的结果中返回就可以了。 +
+类型编码的转换部分：
+---------------
+// 参数类型转换
+- (void)setCode:(NSString *)code
+{
+    _code = code;
+
+    MJExtensionAssertParamNotNil(code);
+
+    if ([code isEqualToString:MJPropertyTypeId]) {
+        _idType = YES;
+    } else if (code.length == 0) {
+        _KVCDisabled = YES;
+    } else if (code.length > 3 && [code hasPrefix:@"@\""]) {
+        // 去掉@"和"，截取中间的类型名称
+        _code = [code substringWithRange:NSMakeRange(2, code.length - 3)];
+        // 得到类型类型
+        _typeClass = NSClassFromString(_code);
+        _fromFoundation = [MJFoundation isClassFromFoundation:_typeClass];
+        // 是否为NSNumber类型
+        _numberType = [_typeClass isSubclassOfClass:[NSNumber class]];
+
+    } else if ([code isEqualToString:MJPropertyTypeSEL] ||
+               [code isEqualToString:MJPropertyTypeIvar] ||
+               [code isEqualToString:MJPropertyTypeMethod]) {
+        _KVCDisabled = YES;
+    }
+
+    // 是否为数字类型
+    NSString *lowerCode = _code.lowercaseString;
+    NSArray *numberTypes = @[MJPropertyTypeInt, MJPropertyTypeShort, MJPropertyTypeBOOL1, MJPropertyTypeBOOL2, MJPropertyTypeFloat, MJPropertyTypeDouble, MJPropertyTypeLong, MJPropertyTypeLongLong, MJPropertyTypeChar];
+
+    // 是否为基本数据类型
+    if ([numberTypes containsObject:lowerCode]) {
+        _numberType = YES;
+
+        if ([lowerCode isEqualToString:MJPropertyTypeBOOL1]
+            || [lowerCode isEqualToString:MJPropertyTypeBOOL2]) {
+            _boolType = YES;
+        }
+    }
+}
+---------------
+下面是比较重要的一部分
+---------------
+if ([code isEqualToString:MJPropertyTypeId]) {
+       _idType = YES;
+   } else if (code.length == 0) {
+       _KVCDisabled = YES;
+   } else if (code.length > 3 && [code hasPrefix:@"@\""]) {
+       // 去掉@"和"，截取中间的类型名称
+       _code = [code substringWithRange:NSMakeRange(2, code.length - 3)];
+       // 得到类型类型
+       _typeClass = NSClassFromString(_code);
+       _fromFoundation = [MJFoundation isClassFromFoundation:_typeClass];
+       // 是否为NSNumber类型
+       _numberType = [_typeClass isSubclassOfClass:[NSNumber class]];
+
+   } else if ([code isEqualToString:MJPropertyTypeSEL] ||
+              [code isEqualToString:MJPropertyTypeIvar] ||
+              [code isEqualToString:MJPropertyTypeMethod]) {
+       _KVCDisabled = YES;
+   }
+---------------
+传进来的code就是属性所对应的属性名称，比如NSArray对应@"NSArray"。
+自定义的类，签名都会有一个@符号，后面接上类名。形式如@Classname。
+
+- [red]#MJPropertyKey#
+
+这个类是对属性进行分类。所有属性可以归为两类一种是字典，也就是键值对（NSDictionary）和数组（NSArray）。
+外面通过调用- (id)valueInObject:(id)object从传进来的id类型中取值。
+---------------
+- (id)valueInObject:(id)object
+{
+    if ([object isKindOfClass:[NSDictionary class]] && self.type == MJPropertyKeyTypeDictionary) {
+        return object[self.name];
+    } else if ([object isKindOfClass:[NSArray class]] && self.type == MJPropertyKeyTypeArray) {
+        NSArray *array = object;
+        NSUInteger index = self.name.intValue;
+        if (index < array.count) return array[index];
+        return nil;
+    }
+    return nil;
+}
+---------------
+- [red]#MJProperty#
+
+这个类是对objc_property_t封装，存储一个属性值相关的详细信息，将objc_property_t转为能够直接用的对象。
+它是对objc_property_t类型的一次封装，便于我们使用。同时它也依赖于上面所介绍的几种数据类型。
+从.h文件看到#import "MJPropertyType.h" #import "MJPropertyKey.h"。
+同样也依赖于MJFoundation和MJExtensionConst +
+初始化入口函数+ (instancetype)cachedPropertyWithProperty:(objc_property_t)property。
+正如上面所说目的就是将runtime中的objc_property_t转为MJProperty方便我们的使用。 +
+具体实现：
+---------------
++ (instancetype)cachedPropertyWithProperty:(objc_property_t)property
+{
+    MJProperty *propertyObj = objc_getAssociatedObject(self, property);
+    if (propertyObj == nil) {
+        propertyObj = [[self alloc] init];
+        // 转为MJProperty
+        propertyObj.property = property;
+        objc_setAssociatedObject(self, property, propertyObj, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return propertyObj;
+}
+---------------
+MJProperty *propertyObj = objc_getAssociatedObject(self, property);这句话是动态给类添加属性，也就是说，给类添加了一个属性名为property的MJProperty类型属性。
+注意这里是一个类方法，也就是这里的self代表什么。 +
+这里的缓存方法是通过懒加载的形式实现的，将需要缓存的属性动态添加到类上面。如果没有则新加属性有则直接返回属性。
+这样做的目的是为了一个类可能在项目中会用到很多次字典转模型。所以保存一份之后就不用每次都创建新的属性标识了，以空间换时间。 +
+把这个方法执行完，就得到了如下三个属性的值：
+---------------
+/** 成员属性 */
+@property (nonatomic, assign) objc_property_t property;
+/** 成员属性的名字 */
+@property (nonatomic, readonly) NSString *name;
+
+/** 成员属性的类型 */
+@property (nonatomic, readonly) MJPropertyType *type;
+---------------
+除了公开的属性还有两个私有属性：
+---------------
+@property (strong, nonatomic) NSMutableDictionary *propertyKeysDict;
+@property (strong, nonatomic) NSMutableDictionary *objectClassInArrayDict;
+---------------
+他们分别保存了的类型是MJPropertyKey
+---------------
+/**
+ * 设置object的成员变量值
+ */
+- (void)setValue:(id)value forObject:(id)object;
+/**
+ * 得到object的成员属性值
+ */
+- (id)valueForObject:(id)object;
+---------------
+对特定的属性存取值。
+---------------
+/** 非数组类型 */
+- (void)setOriginKey:(id)originKey forClass:(Class)c;
+- (NSArray *)propertyKeysForClass:(Class)c;
+
+/** 模型数组中的保存模型类型 */
+- (void)setObjectClassInArray:(Class)objectClass forClass:(Class)c;
+- (Class)objectClassInArrayForClass:(Class)c;
+---------------
+- [red]#NSObject+MJClass#
+
+从这个类开始，就进入了分析NSObject分类的程度了。前面分析的对象是为NSObject所依赖的。
+这个类的功能大致可以归为遍历、属性白名单、属性黑名单。所以可以重点来看看这三个部分。
+外部通过+ (NSMutableArray *)mj_totalIgnoredPropertyNames;和+ (NSMutableArray *)mj_totalAllowedCodingPropertyNames;获得黑名单与白名单。
+
+- 类的遍历
+---------------
++ (void)mj_enumerateClasses:(MJClassesEnumeration)enumeration;
++ (void)mj_enumerateAllClasses:(MJClassesEnumeration)enumeration;
+---------------
+mj_enumerateClasses只要当前遍历的是Foundatoin框架的就会退出遍历，否则会一直沿着继承树遍历。mj_enumerateAllClasses会遍历继承树上所有的类。
+为什么会存在遍历到Foundatoin框架就停止遍历了，因为我们自定义的模型大部分是继承自NSObject类的。这是为什么停止，那为什么要遍历。
+因为自定义的模型可能继承自己我们自定义的模型。为了保护所有的信息，比如属性信息，所以需要遍历。
+
+注意这里的参数其实是一个typedef void (^MJClassesEnumeration)(Class c, BOOL *stop);Block。写法有点类似系统中数组遍历。
+这种写法值得学习，平时我们遍历都是在类中直接调用一个方法，而通过这样传递Block这样就更加解耦了。其实也可以通过Target-Action模式实现。注意这里的Bool类型传的是指针哦，就像*stop。
+
+相关的实现：
+---------------
++ (void)mj_enumerateClasses:(MJClassesEnumeration)enumeration
+{
+    // 1.没有block就直接返回
+    if (enumeration == nil) return;
+
+    // 2.停止遍历的标记
+    BOOL stop = NO;
+
+    // 3.当前正在遍历的类
+    Class c = self;
+
+    // 4.开始遍历每一个类
+    while (c && !stop) {
+        // 4.1.执行操作
+        // 对一般类型取地址传递
+        enumeration(c, &stop);
+
+        // 4.2.获得父类
+        c = class_getSuperclass(c);
+
+        if ([MJFoundation isClassFromFoundation:c]) break;
+    }
+}
+---------------
+- 白名单配置
+
+配置白名单是为了对属性进行过滤。只有在白名单中的属性名才会进行字典和模型的转换。来说一下这里涉及的配置方法。
+外部调用者，通过类方法传入Block参数进行配置。typedef NSArray * (^MJAllowedPropertyNames)();这是传入的Block定义。可以看到返回的是一个数组。
+为什么不直接将白名单属性暴露处理出来给调用者直接使用呢？大概是遵循了设计模式中的知道最少原则。
+
+在.m文件中定义了几个保存白名单、黑名单的静态数组。定义如下：
+---------------
+static NSMutableDictionary *allowedPropertyNamesDict_;
+static NSMutableDictionary *ignoredPropertyNamesDict_;
+static NSMutableDictionary *allowedCodingPropertyNamesDict_;
+static NSMutableDictionary *ignoredCodingPropertyNamesDict_;
+---------------
+为了保存传入的Block信息，需要给分类动态添加属性。
+---------------
+// 在分类中新增属性
+static const char MJAllowedPropertyNamesKey = '\0'; // 白名单
+static const char MJIgnoredPropertyNamesKey = '\0'; // 黑名单
+static const char MJAllowedCodingPropertyNamesKey = '\0'; // 归档白名单
+static const char MJIgnoredCodingPropertyNamesKey = '\0'; // 归档黑名单
+---------------
+比如这里的MJAllowedPropertyNamesKey就是白名单传进来的属性名称了。
+
+设置白名单的入口：
+---------------
++ (void)mj_setupAllowedPropertyNames:(MJAllowedPropertyNames)allowedPropertyNames;
+{
+    [self mj_setupBlockReturnValue:allowedPropertyNames key:&MJAllowedPropertyNamesKey];
+}
+---------------
+最终调用的是mj_setupBlockReturnValue
+---------------
++ (void)mj_setupBlockReturnValue:(id (^)())block key:(const char *)key
+{
+    if (block) {
+        objc_setAssociatedObject(self, key, block(), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    } else {
+        objc_setAssociatedObject(self, key, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+
+    // 清空数据
+    [[self dictForKey:key] removeAllObjects];
+}
+---------------
+可以很清楚的看到这里将block作为自身的属性。
+
+除了这种方式还有一种：那就是在类中实现mj_allowedPropertyNames比如：
+---------------
++ (NSArray *)mj_allowedPropertyNames {
+    return @[@"name",@"icon"];
+}
+---------------
+后面获取可用属性的时候会对这两种方式都判断。
+
+- 设置黑名单
+
+设置黑名单的方式和设置白名单类似。
+
+- 最终可转换的数组
+
+调用这个方法mj_totalIgnoredPropertyNames就是返回经过过滤后的属性。
+一共有两种方式，一种是通过Selector，一种是通过Block设置。
+---------------
++ (NSMutableArray *)mj_totalObjectsWithSelector:(SEL)selector key:(const char *)key
+{
+    NSMutableArray *array = [self dictForKey:key][NSStringFromClass(self)];
+    if (array) return array;
+
+    // 创建、存储
+    [self dictForKey:key][NSStringFromClass(self)] = array = [NSMutableArray array];
+
+    if ([self respondsToSelector:selector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        NSArray *subArray = [self performSelector:selector];
+#pragma clang diagnostic pop
+        if (subArray) {
+            [array addObjectsFromArray:subArray];
+        }
+    }
+
+    [self mj_enumerateAllClasses:^(__unsafe_unretained Class c, BOOL *stop) {
+        NSArray *subArray = objc_getAssociatedObject(c, key);
+        [array addObjectsFromArray:subArray];
+    }];
+    return array;
+}
+---------------
+
+- 通过Selector
+
+通过selector是指使用者如果想添加白名单需要自定义实现类方法mj_allowedPropertyNames。返回的是一个白名单数组。黑名单原理类似。key是指定过滤的是白名单还是黑名单。
+selector的方式需要给对应的类添加一个类方法如：
+---------------
++ (NSArray *)mj_allowedPropertyNames {
+    return @[@"name",@"icon"];
+}
+---------------
+
+- 通过Block
+
+前面设置的是一个返回值类型为数组的Block ：
+---------------
+if (block) {
+      objc_setAssociatedObject(self, key, block(), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  } else {
+      objc_setAssociatedObject(self, key, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+  }
+---------------
+取得时候又是直接取得数组，然后返回执行结果：
+---------------
+[self mj_enumerateAllClasses:^(__unsafe_unretained Class c, BOOL *stop) {
+      NSArray *subArray = objc_getAssociatedObject(c, key);
+      [array addObjectsFromArray:subArray];
+  }];
+---------------
+
+- [red]#NSObject+MJCoding#
+
+这个类是用于归档。只有实现了MJCoding协议的类才能够归档
+---------------
+/**
+ *  这个数组中的属性名才会进行归档
+ */
++ (NSArray *)mj_allowedCodingPropertyNames;
+/**
+ *  这个数组中的属性名将会被忽略：不进行归档
+ */
++ (NSArray *)mj_ignoredCodingPropertyNames;
+---------------
+在进行归档的时候，我们只需要在Implemenion中添加MJExtensionCodingImplementation
+实际上是宏定义了NSCode断言进行归档，解档。
+---------------
+#define MJCodingImplementation \
+- (id)initWithCoder:(NSCoder *)decoder \
+{ \
+if (self = [super init]) { \
+[self mj_decode:decoder]; \
+} \
+return self; \
+} \
+\
+- (void)encodeWithCoder:(NSCoder *)encoder \
+{ \
+[self mj_encode:encoder]; \
+}
+---------------
+看一看归档的部分，解档的步骤一样
+---------------
+- (void)mj_encode:(NSCoder *)encoder
+{
+    Class clazz = [self class];
+
+    NSArray *allowedCodingPropertyNames = [clazz mj_totalAllowedCodingPropertyNames];
+    NSArray *ignoredCodingPropertyNames = [clazz mj_totalIgnoredCodingPropertyNames];
+
+    [clazz mj_enumerateProperties:^(MJProperty *property, BOOL *stop) {
+        // 检测是否被忽略
+        if (allowedCodingPropertyNames.count && ![allowedCodingPropertyNames containsObject:property.name]) return;
+        if ([ignoredCodingPropertyNames containsObject:property.name]) return;
+
+        id value = [property valueForObject:self];
+        if (value == nil) return;
+        [encoder encodeObject:value forKey:property.name];
+    }];
+}
+---------------
+
+- [red]#NSObject+MJProperty#
+
+这个类保存了属性的一些配置。大致可分为：
+
+- 1.遍历属性
+
+- 2.新值配置
+
+- 3.key配置
+
+- 4.array model class配置
+
+[big]#遍历属性# +
++ (void)mj_enumerateProperties:(MJPropertiesEnumeration)enumeration遍历所有属性的入口。这个方法在很多地方都存在过。
+属性会从缓存中取，NSArray *cachedProperties = [self properties];。[self properties]是缓存属性的部分。然后就直接遍历所有的属性。
+---------------
++ (void)mj_enumerateProperties:(MJPropertiesEnumeration)enumeration
+{
+    // 获得成员变量
+    // 从类的继承树遍历每一个类，从类中获得属性
+    NSArray *cachedProperties = [self properties];
+
+    // 遍历成员变量
+    BOOL stop = NO;
+    for (MJProperty *property in cachedProperties) {
+        enumeration(property, &stop);
+        if (stop) break;
+    }
+}
+---------------
+这里遍历用了block,外部传递block进来遍历。typedef void (^MJPropertiesEnumeration)(MJProperty *property, BOOL *stop);这个库很多地方都用到了类似的遍历方式。
+
+[big]#新值配置# +
+新值配置是什么意思? ：就是改变特定的属性的原有值，这样更加灵活。同样有两种方式Block和类方法。存取方法如下：
+---------------
++ (void)mj_setupNewValueFromOldValue:(MJNewValueFromOldValue)newValueFormOldValue;
++ (id)mj_getNewValueFromObject:(__unsafe_unretained id)object oldValue:(__unsafe_unretained id)oldValue property:(__unsafe_unretained MJProperty *)property;
+---------------
+这里的typedef id (^MJNewValueFromOldValue)(id object, id oldValue, MJProperty *property);其实和下面方法参数形式是一样的。看了一下这个方法，一次只支持一个属性新值配置。
+---------------
++ (void)mj_setupNewValueFromOldValue:(MJNewValueFromOldValue)newValueFormOldValue
+{
+    objc_setAssociatedObject(self, &MJNewValueFromOldValueKey, newValueFormOldValue, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+---------------
+如何获取新值？肯定需要兼容两种设置方式，一种Block,一种通过方法设置。
+---------------
++ (id)mj_getNewValueFromObject:(__unsafe_unretained id)object oldValue:(__unsafe_unretained id)oldValue property:(MJProperty *__unsafe_unretained)property{
+    // 如果有实现方法
+    if ([object respondsToSelector:@selector(mj_newValueFromOldValue:property:)]) {
+        return [object mj_newValueFromOldValue:oldValue property:property];
+    }
+    // 兼容旧版本
+    if ([self respondsToSelector:@selector(newValueFromOldValue:property:)]) {
+        return [self performSelector:@selector(newValueFromOldValue:property:)  withObject:oldValue  withObject:property];
+    }
+
+    // 查看静态设置
+    __block id newValue = oldValue;
+    [self mj_enumerateAllClasses:^(__unsafe_unretained Class c, BOOL *stop) {
+        MJNewValueFromOldValue block = objc_getAssociatedObject(c, &MJNewValueFromOldValueKey);
+        if (block) {
+            newValue = block(object, oldValue, property);
+            *stop = YES;
+        }
+    }];
+    return newValue;
+}
+---------------
+思路和上面分析白名单，黑名单设置的方式一样。
+
+[big]#key配置#
+
+key配置是解决属性名称需要重新定义的情况。这个配置统一通过Block设置。这里注意一下为什么在动态添加了属性之后需要将cachedPropertiesDict_字典里面的清空一次。如下：
+---------------
++ (void)mj_setupReplacedKeyFromPropertyName:(MJReplacedKeyFromPropertyName)replacedKeyFromPropertyName
+{
+    [self mj_setupBlockReturnValue:replacedKeyFromPropertyName key:&MJReplacedKeyFromPropertyNameKey];
+
+    [[self dictForKey:&MJCachedPropertiesKey] removeAllObjects];
+}
+
++ (void)mj_setupReplacedKeyFromPropertyName121:(MJReplacedKeyFromPropertyName121)replacedKeyFromPropertyName121
+{
+    objc_setAssociatedObject(self, &MJReplacedKeyFromPropertyName121Key, replacedKeyFromPropertyName121, OBJC_ASSOCIATION_COPY_NONATOMIC);
+
+    [[self dictForKey:&MJCachedPropertiesKey] removeAllObjects];
+}
+---------------
+这样做的目的是为了保证缓存数组中的数据是最新的。因为我们替换了属性的key，所以要用最新的。在获取所有属性中。有这么一段：
+---------------
+NSMutableArray *cachedProperties = [self dictForKey:&MJCachedPropertiesKey][NSStringFromClass(self)];
+
+   if (cachedProperties == nil) {
+       cachedProperties = [NSMutableArray array];
+        // 遍历类继承树，一直遍历到fondation框架。也就是到NSObject就停止遍历。因为我们模型都是从NSObject开始继承的
+       [self mj_enumerateClasses:^(__unsafe_unretained Class c, BOOL *stop) {
+           // 1.获得所有的成员变量
+
+       ......
+}
+---------------
+可以看到只有属性为空才会遍历类，获取最新属性。
+
+[big]#array model class配置#
+
+这个方法是处理模型中包含一另一个模型数组。在实际运用比较多。
+---------------
++ (void)mj_setupObjectClassInArray:(MJObjectClassInArray)objectClassInArray
+{
+    [self mj_setupBlockReturnValue:objectClassInArray key:&MJObjectClassInArrayKey];
+
+    [[self dictForKey:&MJCachedPropertiesKey] removeAllObjects];
+}
+---------------
+和上面的方式一样，会将其作为类的一个属性将模型数组字典保存下来。方便后面使用。
+---------------
+static const char MJReplacedKeyFromPropertyNameKey = '\0';
+static const char MJReplacedKeyFromPropertyName121Key = '\0';
+static const char MJNewValueFromOldValueKey = '\0';
+static const char MJObjectClassInArrayKey = '\0';
+static const char MJCachedPropertiesKey = '\0';
+---------------
+这是NSObject+MJProperty.h动态添加的所有属性。通过名字可以知道它的用途。
+
+- [red]#NSObject+MJKeyValue#
+
+这个类中有一个很重要的协议MJKeyValue，该协议里面规定了黑名单和白名单设置。
+---------------
++ (NSArray *)mj_allowedPropertyNames;
++ (NSArray *)mj_ignoredPropertyNames;
++ (NSDictionary *)mj_replacedKeyFromPropertyName;
++ (id)mj_replacedKeyFromPropertyName121:(NSString *)propertyName;
++ (NSDictionary *)mj_objectClassInArray;
+- (id)mj_newValueFromOldValue:(id)oldValue property:(MJProperty *)property;
+- (void)mj_keyValuesDidFinishConvertingToObject;
+- (void)mj_objectDidFinishConvertingToKeyValues;
+---------------
+这个类的入口就是- (instancetype)mj_setKeyValues:(id)keyValues context:(NSManagedObjectContext *)context这个方法。
+我们把外部的字典，json传入，最终把字典的key映射到对应的属性上，value成为这个属性的值。
+
+[big]#参数过滤#
+
+第一步肯定是对参数合法性进行校验。
+---------------
+keyValues = [keyValues mj_JSONObject];
+MJExtensionAssertError([keyValues isKindOfClass:[NSDictionary class]], self, [self class], @"keyValues参数不是一个字典");
+---------------
+经过转换后还不是字典类型就直接抛出异常。
+
+[big]#黑名单和白名单过滤#
+
+接下来如果使用者配置了属性的白名单或者黑名单，则会取出黑白名单。在遍历类的属性的时候过滤掉。
+---------------
+NSArray *allowedPropertyNames = [clazz mj_totalAllowedPropertyNames];
+NSArray *ignoredPropertyNames = [clazz mj_totalIgnoredPropertyNames];
+---------------
+因为属性列表是在类对象上，所以自然去NSObject+MJClass.h调用。这个类主要功能就是提供了黑白名单的存储。
+NSObject+MJClass.h中存储的黑白名单
+---------------
+static const char MJAllowedPropertyNamesKey = '\0'; // 白名单
+static const char MJIgnoredPropertyNamesKey = '\0'; // 黑名单
+static const char MJAllowedCodingPropertyNamesKey = '\0'; // 归档白名单
+static const char MJIgnoredCodingPropertyNamesKey = '\0'; // 归档黑名单
+---------------
+
+[big]#遍历类的所有属性#
+
+接下来就是对类的每个属性处理，比如替换，忽略等。涉及到属性的是在NSObject+MJProperty.h类中完成的。比如遍历就是。
+通过传入block,在遍历的同时对属性就行处理。形式就像通过enumerateObjectsUsingBlock:遍历。
+---------------
+[someArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+
+    }]
+---------------
+遍历属性
+---------------
+[clazz mj_enumerateProperties:^(MJProperty *property, BOOL *stop) {
+......
+}];
+---------------
+如果属性在白名单或者黑名单中出现在则直接跳出这次循环。
+---------------
+if (allowedPropertyNames.count && ![allowedPropertyNames containsObject:property.name]) return;
+ if ([ignoredPropertyNames containsObject:property.name]) return;
+---------------
+取出属性对应的值，当然这里增加了对值得过滤，比如设置了新值替换旧的值。如果最终取出的结果中没有值，则直接返回。
+---------------
+id value;
+
+NSArray *propertyKeyses = [property propertyKeysForClass:clazz];
+for (NSArray *propertyKeys in propertyKeyses) {
+   value = keyValues;
+   for (MJPropertyKey *propertyKey in propertyKeys) {
+       value = [propertyKey valueInObject:value];
+   }
+   if (value) break;
+}
+
+// 值的过滤
+id newValue = [clazz mj_getNewValueFromObject:self oldValue:value property:property];
+if (newValue != value) { // 有过滤后的新值
+   [property setValue:newValue forObject:self];
+   return;
+}
+
+// 如果没有值，就直接返回
+if (!value || value == [NSNull null]) return;
+---------------
+这时候属性的key和value都是合法的了。剩下的就是最终处理部分了：
+
+- 处理属性，比如将不可变数组转换成可变数组
+
+- 如果不是foundation框架的类，也就是继承自定义模型的类需要递归遍历
+
+- 对模型数组的处理
+
+- 如果是foundation框架中的，这个部分就可以直接给value赋值了
+
+- 最终KVC给属性赋值：[property setValue:value forObject:self];

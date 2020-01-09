@@ -1,0 +1,1909 @@
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <title>YYCache学习笔记</title>
+      <style>
+        #wrapper {width: 960px; margin: 0 auto;}
+        /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
+/* Remove comment around @import statement below when using as a custom stylesheet */
+/*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";*/
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}
+audio,canvas,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+[hidden],template{display:none}
+script{display:none!important}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{margin:0}
+a{background:transparent}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+abbr[title]{border-bottom:1px dotted}
+b,strong{font-weight:bold}
+dfn{font-style:italic}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}
+input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,*:before,*:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+body{-webkit-font-smoothing:antialiased}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.center{margin-left:auto;margin-right:auto}
+.spread{width:100%}
+p.lead,.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{font-size:1.21875em;line-height:1.6}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:none}
+p{font-family:inherit;font-weight:400;font-size:1em;line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #ddddd8;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em;height:0}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol,ul.no-bullet,ol.no-bullet{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ul.no-bullet{list-style:none}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
+abbr{text-transform:none}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote cite{display:block;font-size:.9375em;color:rgba(0,0,0,.6)}
+blockquote cite:before{content:"\2014 \0020"}
+blockquote cite a,blockquote cite a:visited{color:rgba(0,0,0,.6)}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media only screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+table thead,table tfoot{background:#f7f8f7;font-weight:bold}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt,table tr:nth-of-type(even){background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
+body{tab-size:4}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.clearfix:before,.clearfix:after,.float-group:before,.float-group:after{content:" ";display:table}
+.clearfix:after,.float-group:after{clear:both}
+*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre,pre>code{line-height:1.45;color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;text-rendering:optimizeSpeed}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menu{color:rgba(0,0,0,.8)}
+b.button:before,b.button:after{position:relative;top:-1px;font-weight:400}
+b.button:before{content:"[";padding:0 3px 0 2px}
+b.button:after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header:before,#header:after,#content:before,#content:after,#footnotes:before,#footnotes:after,#footer:before,#footer:after{content:" ";display:table}
+#header:after,#content:after,#footnotes:after,#footer:after{clear:both}
+#content{margin-top:1.25em}
+#content:before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #ddddd8}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #ddddd8;padding-bottom:8px}
+#header .details{border-bottom:1px solid #ddddd8;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span:before{content:"\00a0\2013\00a0"}
+#header .details br+span.author:before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark:before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber:after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #ddddd8;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #efefed;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media only screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background-color:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #efefed;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #efefed;left:auto;right:0}}
+@media only screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:100%;background-color:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:rgba(255,255,255,.8);line-height:1.44}
+.sect1{padding-bottom:.625em}
+@media only screen and (min-width:768px){.sect1{padding-bottom:1.25em}}
+.sect1+.sect1{border-top:1px solid #efefed}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor:before,h2>a.anchor:before,h3>a.anchor:before,#toctitle>a.anchor:before,.sidebarblock>.content>.title>a.anchor:before,h4>a.anchor:before,h5>a.anchor:before,h6>a.anchor:before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock>caption.title{white-space:nowrap;overflow:visible;max-width:0}
+.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{color:rgba(0,0,0,.85)}
+table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p{font-size:inherit}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #ddddd8;color:rgba(0,0,0,.6)}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock pre:not(.highlight),.listingblock pre[class="highlight"],.listingblock pre[class^="highlight "],.listingblock pre.CodeRay,.listingblock pre.prettyprint{background:#f7f7f8}
+.sidebarblock .literalblock pre,.sidebarblock .listingblock pre:not(.highlight),.sidebarblock .listingblock pre[class="highlight"],.sidebarblock .listingblock pre[class^="highlight "],.sidebarblock .listingblock pre.CodeRay,.sidebarblock .listingblock pre.prettyprint{background:#f2f1f1}
+.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;padding:1em;font-size:.8125em}
+.literalblock pre.nowrap,.literalblock pre[class].nowrap,.listingblock pre.nowrap,.listingblock pre[class].nowrap{overflow-x:auto;white-space:pre;word-wrap:normal}
+@media only screen and (min-width:768px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:.90625em}}
+@media only screen and (min-width:1280px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:1em}}
+.literalblock.output pre{color:#f7f7f8;background-color:rgba(0,0,0,.9)}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]:before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:#999}
+.listingblock:hover code[data-lang]:before{display:block}
+.listingblock.terminal pre .command:before{content:attr(data-prompt);padding-right:.5em;color:#999}
+.listingblock.terminal pre .command:not([data-prompt]):before{content:"$"}
+table.pyhltable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.pyhltable td{vertical-align:top;padding-top:0;padding-bottom:0;line-height:1.45}
+table.pyhltable td.code{padding-left:.75em;padding-right:0}
+pre.pygments .lineno,table.pyhltable td:not(.code){color:#999;padding-left:0;padding-right:.5em;border-right:1px solid #ddddd8}
+pre.pygments .lineno{display:inline-block;margin-right:.25em}
+table.pyhltable .linenodiv{background:none!important;padding-right:0!important}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock blockquote p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote:before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.5em;margin-right:.5ex;text-align:right}
+.quoteblock .quoteblock{margin-left:0;margin-right:0;padding:.5em 0;border-left:3px solid rgba(0,0,0,.6)}
+.quoteblock .quoteblock blockquote{padding:0 0 0 .75em}
+.quoteblock .quoteblock blockquote:before{display:none}
+.verseblock{margin:0 1em 1.25em 1em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract{margin:0 0 1.25em 0;display:block}
+.quoteblock.abstract blockquote,.quoteblock.abstract blockquote p{text-align:left;word-spacing:0}
+.quoteblock.abstract blockquote:before,.quoteblock.abstract blockquote p:first-of-type:before{display:none}
+table.tableblock{max-width:100%;border-collapse:separate}
+table.tableblock td>.paragraph:last-child p>p:last-child,table.tableblock th>p:last-child,table.tableblock td>p:last-child{margin-bottom:0}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all th.tableblock,table.grid-all td.tableblock{border-width:0 1px 1px 0}
+table.grid-all tfoot>tr>th.tableblock,table.grid-all tfoot>tr>td.tableblock{border-width:1px 1px 0 0}
+table.grid-cols th.tableblock,table.grid-cols td.tableblock{border-width:0 1px 0 0}
+table.grid-all *>tr>.tableblock:last-child,table.grid-cols *>tr>.tableblock:last-child{border-right-width:0}
+table.grid-rows th.tableblock,table.grid-rows td.tableblock{border-width:0 0 1px 0}
+table.grid-all tbody>tr:last-child>th.tableblock,table.grid-all tbody>tr:last-child>td.tableblock,table.grid-all thead:last-child>tr>th.tableblock,table.grid-rows tbody>tr:last-child>th.tableblock,table.grid-rows tbody>tr:last-child>td.tableblock,table.grid-rows thead:last-child>tr>th.tableblock{border-bottom-width:0}
+table.grid-rows tfoot>tr>th.tableblock,table.grid-rows tfoot>tr>td.tableblock{border-width:1px 0 0 0}
+table.frame-all{border-width:1px}
+table.frame-sides{border-width:0 1px}
+table.frame-topbot{border-width:1px 0}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{display:table-cell;line-height:1.6;background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+td>div.verse{white-space:pre}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.unstyled,ol.unnumbered,ul.checklist,ul.none{list-style-type:none}
+ul.unstyled,ol.unnumbered,ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1em;font-size:.85em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{width:1em;position:relative;top:1px}
+ul.inline{margin:0 auto .625em auto;margin-left:-1.375em;margin-right:0;padding:0;list-style:none;overflow:hidden}
+ul.inline>li{list-style:none;float:left;margin-left:1.375em;display:block}
+ul.inline>li>*{display:block}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist>table tr>td:first-of-type{padding:0 .75em;line-height:1}
+.colist>table tr>td:last-of-type{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
+.imageblock.left,.imageblock[style*="float: left"]{margin:.25em .625em 1.25em 0}
+.imageblock.right,.imageblock[style*="float: right"]{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em 0;border-width:1px 0 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;text-indent:-1.05em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background-color:#00fafa}
+.black{color:#000}
+.black-background{background-color:#000}
+.blue{color:#0000bf}
+.blue-background{background-color:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background-color:#fa00fa}
+.gray{color:#606060}
+.gray-background{background-color:#7d7d7d}
+.green{color:#006000}
+.green-background{background-color:#007d00}
+.lime{color:#00bf00}
+.lime-background{background-color:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background-color:#7d0000}
+.navy{color:#000060}
+.navy-background{background-color:#00007d}
+.olive{color:#606000}
+.olive-background{background-color:#7d7d00}
+.purple{color:#600060}
+.purple-background{background-color:#7d007d}
+.red{color:#bf0000}
+.red-background{background-color:#fa0000}
+.silver{color:#909090}
+.silver-background{background-color:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background-color:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background-color:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background-color:#fafa00}
+span.icon>.fa{cursor:default}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note:before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip:before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning:before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution:before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important:before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background-color:rgba(0,0,0,.8);-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]:after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,span.alt{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background-color:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@media print{@page{margin:1.25cm .75cm}
+*{-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:none!important}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare):after,a[href^="https:"]:not(.bare):after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]:after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #ddddd8!important;padding-bottom:0!important}
+.sect1{padding-bottom:0!important}
+.sect1+.sect1{border:0!important}
+#header>h1:first-child{margin-top:1.25rem}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em 0}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span:before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]:before{display:block}
+#footer{background:none!important;padding:0 .9375em}
+#footer-text{color:rgba(0,0,0,.6)!important;font-size:.9em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+
+      </style>
+      <link href='https://fonts.googleapis.com/css?family=Noto+Serif' rel='stylesheet' type='text/css'>
+      <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/styles/default.min.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/highlight.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/asciidoc.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/yaml.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/dockerfile.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/makefile.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/go.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/rust.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/haskell.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/typescript.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/scss.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/less.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/handlebars.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/groovy.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/scala.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/bash.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.4.0/languages/ini.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script>
+    </head>
+    <body>
+      <div id="wrapper">
+        <div class="article">
+          <div class="sect1">
+<h2 id="_yycache">YYCache学习笔记</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>YYCache是一个性能比较好的缓存框架，使用起来也比较方便，用上它可以省去烦人的SQL语句和归档解档方法。</p>
+</div>
+<div class="sect2">
+<h3 id="__">使用</h3>
+<div class="paragraph">
+<p>YYCache对外给了四个初始化方法：分别是<br></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (nullable instancetype)initWithName:(NSString *)name;
+- (nullable instancetype)initWithPath:(NSString *)path NS_DESIGNATED_INITIALIZER;
+
++ (nullable instancetype)cacheWithName:(NSString *)name;
++ (nullable instancetype)cacheWithPath:(NSString *)path;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>可以根据自定义的字符串或路径两种方式来初始化对象。注意：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (instancetype)init UNAVAILABLE_ATTRIBUTE;
++ (instancetype)new UNAVAILABLE_ATTRIBUTE;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>init和new这两个方法在YYCache里被屏蔽掉了，不能使用。创建出实例后，就可以用对象调用方法来实现缓存的相关操作了。
+OK，话不多说，看看YYCache的接口里为我们提供了哪些功能。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>/**
+ 返回值表示一个给定的key是否已经有对应的缓存，该返回值在读取磁盘缓存后返回
+
+ @param key 一个标志着缓存的key值，如果是nil则方法返回值为NO
+ @return 返回bool量表示缓存中有没有key对应的缓存
+ */
+- (BOOL)containsObjectForKey:(NSString *)key;
+
+/**
+ 返回一个bool量表明缓存中是否有给定key对应的缓存值，该方法的执行完毕会回调一个block
+
+ @param key   一个标志着缓存的key值，如果是nil则方法返回值为NO
+ @param block 方法执行完毕时回调的一个block
+ */
+- (void)containsObjectForKey:(NSString *)key withBlock:(nullable void(^)(NSString *key, BOOL contains))block;
+
+/**
+ 返回一个给定key值关联的缓存
+
+ @param key 一个标志着缓存的key值，如果是nil则方法返回值为NO
+ @return 和给定key关联的缓存，如过没有则返回nil
+ */
+- (nullable id&lt;NSCoding&gt;)objectForKey:(NSString *)key;
+
+/**
+ 返回一个给定key值关联的缓存
+
+ @param key 一个标志着缓存的key值，如果是nil则方法返回值为NO
+ @param block 方法执行完毕时回调的一个block
+ */
+- (void)objectForKey:(NSString *)key withBlock:(nullable void(^)(NSString *key, id&lt;NSCoding&gt; object))block;
+
+/**
+ 设置一个指定的key对应的缓存
+
+ @param object 将被写到缓存里的对象，如果为空则会调用removeObjectForKey删除该key对应的缓存
+ @param key    将和缓存相关联的key，如果为空，则该方法无效
+ */
+- (void)setObject:(nullable id&lt;NSCoding&gt;)object forKey:(NSString *)key;
+
+/**
+ 设置一个指定的key对应的缓存
+
+ @param object 将被写到缓存里的对象，如果为空则会调用removeObjectForKey删除该key对应的缓存
+ @param block  方法执行完毕时回调的一个block
+ */
+- (void)setObject:(nullable id&lt;NSCoding&gt;)object forKey:(NSString *)key withBlock:(nullable void(^)(void))block;
+
+/**
+ 删除一个key对应的缓存
+
+ @param key 将要被删除的缓存的key，如果为空，则方法执行无效
+ */
+- (void)removeObjectForKey:(NSString *)key;
+
+/**
+ 删除一个key对应的缓存
+
+ @param key    将要被删除的缓存的key，如果为空，则方法执行无效
+ @param block  方法执行完毕时回调的一个block
+ */
+- (void)removeObjectForKey:(NSString *)key withBlock:(nullable void(^)(NSString *key))block;
+
+/**
+ 清空缓存
+ */
+- (void)removeAllObjects;
+
+/**
+ 清空缓存
+
+ @param block  方法执行完毕时回调的一个block
+ */
+- (void)removeAllObjectsWithBlock:(void(^)(void))block;
+
+/**
+ 清空缓存，同时回调block
+
+ @warning 注意，不可以在这些block里调用YYCache的实例对象
+ @param progress block将会在删除操作的过程中被回调，如果传入nil则忽略
+ @param end      block将会在删除操作结束后被回调，如果传入nil则忽略
+ */
+- (void)removeAllObjectsWithProgressBlock:(nullable void(^)(int removedCount, int totalCount))progress
+                                 endBlock:(nullable void(^)(BOOL error))end;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>判断是否包含以某个键写入的缓存用如下两个方法，一个返回bool值，一个在回调的block中返回是否包含的结果</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (BOOL)containsObjectForKey:(NSString *)key;
+- (void)containsObjectForKey:(NSString *)key withBlock:(nullable void(^)(NSString *key, BOOL contains))block;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>取缓存用如下两个方法，同样的，一个直接将缓存返回，一个从回调的block中取出缓存</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (nullable id&lt;NSCoding&gt;)objectForKey:(NSString *)key;
+- (void)objectForKey:(NSString *)key withBlock:(nullable void(^)(NSString *key, id&lt;NSCoding&gt; object))block;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>写缓存用如下两个方法：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (void)setObject:(nullable id&lt;NSCoding&gt;)object forKey:(NSString *)key;
+- (void)setObject:(nullable id&lt;NSCoding&gt;)object forKey:(NSString *)key withBlock:(nullable void(^)(void))block;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>清除对应key的缓存有如下两个方法：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (void)removeObjectForKey:(NSString *)key;
+- (void)removeObjectForKey:(NSString *)key withBlock:(nullable void(^)(NSString *key))block;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>清空缓存用下面三个方法：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (void)removeAllObjects;
+- (void)removeAllObjectsWithBlock:(void(^)(void))block;
+- (void)removeAllObjectsWithProgressBlock:(nullable void(^)(int removedCount, int totalCount))progress
+                                 endBlock:(nullable void(^)(BOOL error))end;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>OK，讲了这么多下面展示一个使用demo<br>
+初始化YYCache</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>static NSString *const NetworkResponseCache = @"NetworkResponseCache";
+static YYCache *_dataCache;
+
+@implementation MMDNetworkCache
+
++ (void)initialize {
+    _dataCache = [YYCache cacheWithName:NetworkResponseCache];
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>写缓存</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>+ (void)setHttpCache:(id)httpData URL:(NSString *)URL parameters:(NSDictionary *)parameters {
+    NSString *cacheKey = [self cacheKeyWithURL:URL parameters:parameters];
+    //异步缓存,不会阻塞主线程
+    [_dataCache setObject:httpData forKey:cacheKey withBlock:nil];
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>读缓存</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>+ (id)httpCacheForURL:(NSString *)URL parameters:(NSDictionary *)parameters {
+    NSString *cacheKey = [self cacheKeyWithURL:URL parameters:parameters];
+    return [_dataCache objectForKey:cacheKey];
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>生成key</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>//生成cache key
++ (NSString *)cacheKeyWithURL:(NSString *)URL parameters:(NSDictionary *)parameters {
+    if(!parameters){return URL;};
+
+    // 将参数字典转换成字符串
+    NSData *stringData = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:nil];
+    NSString *paraString = [[NSString alloc] initWithData:stringData encoding:NSUTF8StringEncoding];
+
+    // 将URL与转换好的参数字符串拼接在一起,成为最终存储的KEY值
+    NSString *cacheKey = [NSString stringWithFormat:@"%@%@",URL,paraString];
+
+    return cacheKey;
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="___2">底层</h3>
+<div class="sect3">
+<h4 id="___3">读缓存</h4>
+<div class="paragraph">
+<p>读取缓存的整个流程如图：</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../YYCacheDoc/读取缓存.png" alt="读取缓存"></span>
+读取缓存首先会调用- (id&lt;NSCoding&gt;)objectForKey:(NSString *)key方法，该方法的实现如下：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (id&lt;NSCoding&gt;)objectForKey:(NSString *)key {
+    id&lt;NSCoding&gt; object = [_memoryCache objectForKey:key];
+    //如果内存中没有缓存，则从磁盘里去找
+    if (!object) {
+        object = [_diskCache objectForKey:key];
+        //如果磁盘缓存在，而内存中没有，则将磁盘里的缓存再往内存中存一份方便下次快速读取
+        if (object) {
+            [_memoryCache setObject:object forKey:key];
+        }
+    }
+    return object;
+}</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="__strong_memorycache_strong"><strong>MemoryCache</strong></h5>
+<div class="paragraph">
+<p>先是从memoryCache中查找缓存，如果有则直接返回出去，如果没有，则再到diskCache中去查找，如果在diskCache查到了，则再往memoryCache中
+写入一份该缓存，以备下次查找该缓存时直接从内存中快速获取，如果都没有找到，则返回nil。再往下一层走，读取memoryCache中的缓存调用的是下面这个方法：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (id)objectForKey:(id)key {
+    if (!key) return nil;
+    // 加锁，防止资源竞争
+    // OSSpinLock 自旋锁，性能最高的锁。原理很简单，就是一直 do while 忙等。它的缺点是当等待时会消耗大量 CPU 资源，所以它不适用于较长时间的任务。对于内存缓存的存取来说，它非常合适。
+    pthread_mutex_lock(&amp;_lock);
+    // _lru为链表_YYLinkedMap，全部节点存在_lru-&gt;_dic中
+    // 获取节点
+    _YYLinkedMapNode *node = CFDictionaryGetValue(_lru-&gt;_dic, (__bridge const void *)(key));
+    if (node) {
+        //** 有对应缓存 **
+
+        // 重新更新缓存时间
+        node-&gt;_time = CACurrentMediaTime();
+        // 把当前node移到链表表头（根据LRU淘汰算法:Cache的容量是有限的，当Cache的空间都被占满后，如果再次发生缓存失效，就必须选择一个缓存块来替换掉，LRU法是依据各块使用的情况， 总是选择那个最长时间未被使用的块替换。这种方法比较好地反映了程序局部性规律）
+        [_lru bringNodeToHead:node];
+    }
+    // 解锁
+    pthread_mutex_unlock(&amp;_lock);
+    // 有缓存则返回缓存值
+    return node ? node-&gt;_value : nil;
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>里面用的是双向链表和哈希表这两种数据结构来实现存取缓存的，在向链表里读写数据时遵循了LRU淘汰算法：<br></p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>Cache的容量是有限的，当Cache的空间都被占满后，如果再次发生缓存失效，就必须选择一个缓存块来替换掉.LRU法是依据各块使用的情况， 总是选择那个最长时间未被使用的块替换。这种方法比较好地反映了程序局部性规律</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>在内存中对一个Cache的操作无非三种：插入、替换、查找。<br></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>插入：当Cache未满时，新的数据项只需插到双链表头部即可。</p>
+</li>
+<li>
+<p>替换：当Cache已满时，将新的数据项插到双链表头部，并删除双链表的尾结点即可。</p>
+</li>
+<li>
+<p>查找：每次数据项被查询到时，都将此数据项移动到链表头部。</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>YYCache中有两个分类：_YYLinkedMap、_YYLinkedMapNode 分别是一个双向链表和双向链表的节点。<br></p>
+</div>
+<div class="paragraph">
+<p>_YYLinkedMap类：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@interface _YYLinkedMap : NSObject {
+    @package
+    CFMutableDictionaryRef _dic; // do not set object directly
+    NSUInteger _totalCost;
+    NSUInteger _totalCount;
+    _YYLinkedMapNode *_head; // MRU, do not change it directly
+    _YYLinkedMapNode *_tail; // LRU, do not change it directly
+    BOOL _releaseOnMainThread;
+    BOOL _releaseAsynchronously;
+}
+
+/// Insert a node at head and update the total cost.
+/// Node and node.key should not be nil.
+- (void)insertNodeAtHead:(_YYLinkedMapNode *)node;
+
+/// Bring a inner node to header.
+/// Node should already inside the dic.
+- (void)bringNodeToHead:(_YYLinkedMapNode *)node;
+
+/// Remove a inner node and update the total cost.
+/// Node should already inside the dic.
+- (void)removeNode:(_YYLinkedMapNode *)node;
+
+/// Remove tail node if exist.
+- (_YYLinkedMapNode *)removeTailNode;
+
+/// Remove all node in background queue.
+- (void)removeAll;
+
+@end</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>_YYLinkedMapNode类：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>@interface _YYLinkedMapNode : NSObject {
+    @package
+    __unsafe_unretained _YYLinkedMapNode *_prev; // retained by dic
+    __unsafe_unretained _YYLinkedMapNode *_next; // retained by dic
+    id _key;
+    id _value;
+    NSUInteger _cost;
+    NSTimeInterval _time;
+}
+@end</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>链表和节点关系分析图：</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../YYCacheDoc/295346-92b5dc1f0b356781.png" alt="移动节点到链表头">
+</div>
+</div>
+<div class="paragraph">
+<p>读写数据时操作链表的一些方法实现：</p>
+</div>
+<div class="sect5">
+<h6 id="___4">添加节点到链表表头</h6>
+<div class="listingblock">
+<div class="content">
+<pre>// 添加节点到链表头节点
+- (void)insertNodeAtHead:(_YYLinkedMapNode *)node {
+    // 字典保存链表节点node
+    CFDictionarySetValue(_dic, (__bridge const void *)(node-&gt;_key), (__bridge const void *)(node));
+    // 叠加该缓存开销到总内存开销
+    _totalCost += node-&gt;_cost;
+    // 总缓存数+1
+    _totalCount++;
+    if (_head) {
+        // 存在链表头，取代当前表头
+        node-&gt;_next = _head;
+        _head-&gt;_prev = node;
+        // 重新赋值链表表头临时变量_head
+        _head = node;
+    } else {
+        // 不存在链表头
+        _head = _tail = node;
+    }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>添加节点到链表表头，存在表头情况下的图形分析：</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../YYCacheDoc/295346-1cb03d629ecbf2fa.png" alt="存在表头插入">
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="___5">移动当前节点到链表表头</h6>
+<div class="listingblock">
+<div class="content">
+<pre>// 移动当前节点到链表头节点
+- (void)bringNodeToHead:(_YYLinkedMapNode *)node {
+    // 当前节点已是链表头节点
+    if (_head == node) return;
+
+    if (_tail == node) {
+        //**如果node是链表尾节点**
+
+        // 把node指向的上一个节点赋值给链表尾节点
+        _tail = node-&gt;_prev;
+        // 把链表尾节点指向的下一个节点赋值nil
+        _tail-&gt;_next = nil;
+    } else {
+        //**如果node是非链表尾节点和链表头节点**
+
+        // 把node指向的上一个节点赋值給node指向的下一个节点node指向的上一个节点
+        node-&gt;_next-&gt;_prev = node-&gt;_prev;
+        // 把node指向的下一个节点赋值给node指向的上一个节点node指向的下一个节点
+        node-&gt;_prev-&gt;_next = node-&gt;_next;
+    }
+    // 把链表头节点赋值给node指向的下一个节点
+    node-&gt;_next = _head;
+    // 把node指向的上一个节点赋值nil
+    node-&gt;_prev = nil;
+    // 把节点赋值给链表头节点的指向的上一个节点
+    _head-&gt;_prev = node;
+    _head = node;
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果node是非链表尾节点和链表头节点情况图形分析：</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../YYCacheDoc/295346-682e8396c2d9e092.png" alt="移动节点到链表头">
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="___6">移除节点</h6>
+<div class="listingblock">
+<div class="content">
+<pre>// 移除节点
+- (void)removeNode:(_YYLinkedMapNode *)node {
+    // 从字典中移除node
+    CFDictionaryRemoveValue(_dic, (__bridge const void *)(node-&gt;_key));
+    // 减掉总内存消耗
+    _totalCost -= node-&gt;_cost;
+    // // 总缓存数-1
+    _totalCount--;
+    // 重新连接链表(看图分析吧)
+    if (node-&gt;_next) node-&gt;_next-&gt;_prev = node-&gt;_prev;
+    if (node-&gt;_prev) node-&gt;_prev-&gt;_next = node-&gt;_next;
+    if (_head == node) _head = node-&gt;_next;
+    if (_tail == node) _tail = node-&gt;_prev;
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="___7">移除尾节点</h6>
+<div class="listingblock">
+<div class="content">
+<pre>// 移除尾节点(如果存在)
+- (_YYLinkedMapNode *)removeTailNode {
+    if (!_tail) return nil;
+    // 拷贝一份要删除的尾节点指针
+    _YYLinkedMapNode *tail = _tail;
+    // 移除链表尾节点
+    CFDictionaryRemoveValue(_dic, (__bridge const void *)(_tail-&gt;_key));
+    // 减掉总内存消耗
+    _totalCost -= _tail-&gt;_cost;
+    // 总缓存数-1
+    _totalCount--;
+    if (_head == _tail) {
+        // 清除节点，链表上已无节点了
+        _head = _tail = nil;
+    } else {
+        // 设倒数第二个节点为链表尾节点
+        _tail = _tail-&gt;_prev;
+        _tail-&gt;_next = nil;
+    }
+    // 返回完tail后_tail将会释放
+    return tail;
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="___8">移除所有缓存</h6>
+<div class="listingblock">
+<div class="content">
+<pre>- (void)removeAll {
+    // 清空内存开销与缓存数量
+    _totalCost = 0;
+    _totalCount = 0;
+    // 清空头尾节点
+    _head = nil;
+    _tail = nil;
+
+    if (CFDictionaryGetCount(_dic) &gt; 0) {
+        // 拷贝一份字典
+        CFMutableDictionaryRef holder = _dic;
+        // 重新分配新的空间
+        _dic = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &amp;kCFTypeDictionaryKeyCallBacks, &amp;kCFTypeDictionaryValueCallBacks);
+
+        if (_releaseAsynchronously) {
+            // 异步释放缓存
+            dispatch_queue_t queue = _releaseOnMainThread ? dispatch_get_main_queue() : YYMemoryCacheGetReleaseQueue();
+            dispatch_async(queue, ^{
+                CFRelease(holder); // hold and release in specified queue
+            });
+        } else if (_releaseOnMainThread &amp;&amp; !pthread_main_np()) {
+            // 主线程上释放缓存
+            dispatch_async(dispatch_get_main_queue(), ^{
+                CFRelease(holder); // hold and release in specified queue
+            });
+        } else {
+            // 同步释放缓存
+            CFRelease(holder);
+        }
+    }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>于是乎，上面的读取缓存的方法- (id)objectForKey:(id)key里的具体实现就很好理解了：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (id)objectForKey:(id)key {
+    if (!key) return nil;
+    // 加锁，防止资源竞争
+    // OSSpinLock 自旋锁，性能最高的锁。原理很简单，就是一直 do while 忙等。它的缺点是当等待时会消耗大量 CPU 资源，所以它不适用于较长时间的任务。对于内存缓存的存取来说，它非常合适。
+    pthread_mutex_lock(&amp;_lock);
+    // _lru为链表_YYLinkedMap，全部节点存在_lru-&gt;_dic中
+    // 获取节点
+    _YYLinkedMapNode *node = CFDictionaryGetValue(_lru-&gt;_dic, (__bridge const void *)(key));
+    if (node) {
+        //** 有对应缓存 **
+
+        // 重新更新缓存时间
+        node-&gt;_time = CACurrentMediaTime();
+        // 把当前node移到链表表头（根据LRU淘汰算法:Cache的容量是有限的，当Cache的空间都被占满后，如果再次发生缓存失效，就必须选择一个缓存块来替换掉，LRU法是依据各块使用的情况， 总是选择那个最长时间未被使用的块替换。这种方法比较好地反映了程序局部性规律）
+        [_lru bringNodeToHead:node];
+    }
+    // 解锁
+    pthread_mutex_unlock(&amp;_lock);
+    // 有缓存则返回缓存值
+    return node ? node-&gt;_value : nil;
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>先从哈希表CFDictionary里取出缓存，然后再调用移动节点到双向链表表头的方法更新节点的位置并更新缓存的读取时间。</p>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="__strong_diskcache_strong"><strong>DiskCache</strong></h5>
+<div class="paragraph">
+<p>diskCache的结构如下图：</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../YYCacheDoc/295346-98ee887bce557fe2.png" alt="diskCache的结构">
+</div>
+</div>
+<div class="paragraph">
+<p>YYDiskCache对YYKVStorage这一层封装主要实现了数据库+文件的缓存</p>
+</div>
+<div class="sect5">
+<h6 id="_yykvstorage">YYKVStorage</h6>
+<div class="paragraph">
+<p>YYKVStorage.h的方法结构图如图：</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../YYCacheDoc/295346-6f8fe64c794176fd.png" alt="YYKVStorage.h的方法结构">
+</div>
+</div>
+<div class="paragraph">
+<p>YYKVStorage.h文件里的方法解释</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>#import &lt;Foundation/Foundation.h&gt;
+
+NS_ASSUME_NONNULL_BEGIN
+
+// 用YYKVStorageItem保存缓存相关参数
+@interface YYKVStorageItem : NSObject
+// 缓存键值
+@property (nonatomic, strong) NSString *key;
+// 缓存对象
+@property (nonatomic, strong) NSData *value;
+// 缓存文件名
+@property (nullable, nonatomic, strong) NSString *filename;
+// 缓存大小
+@property (nonatomic) int size;
+// 修改时间
+@property (nonatomic) int modTime;
+// 最后使用时间
+@property (nonatomic) int accessTime;
+// 拓展数据
+@property (nullable, nonatomic, strong) NSData *extendedData;
+@end
+
+
+// 可以指定缓存类型
+typedef NS_ENUM(NSUInteger, YYKVStorageType) {
+    // 文件缓存(filename != null)
+    YYKVStorageTypeFile = 0,
+    // 数据库缓存
+    YYKVStorageTypeSQLite = 1,
+    // 如果filename != null，则value用文件缓存，缓存的其他参数用数据库缓存；如果filename == null,则用数据库缓存
+    YYKVStorageTypeMixed = 2,
+};
+
+// 缓存操作实现
+@interface YYKVStorage : NSObject
+
+#pragma mark - Attribute
+// 缓存路径
+@property (nonatomic, readonly) NSString *path;
+// 缓存方式
+@property (nonatomic, readonly) YYKVStorageType type;
+// 是否要打开错误日志
+@property (nonatomic) BOOL errorLogsEnabled;
+
+#pragma mark - Initializer
+// 这两个方法不能使用，因为实例化对象时要有初始化path、type
+- (instancetype)init UNAVAILABLE_ATTRIBUTE;
++ (instancetype)new UNAVAILABLE_ATTRIBUTE;
+
+/**
+ *  实例化对象
+ *
+ *  @param path 缓存路径
+ *  @param type 缓存方式
+ */
+- (nullable instancetype)initWithPath:(NSString *)path type:(YYKVStorageType)type NS_DESIGNATED_INITIALIZER;
+
+
+#pragma mark - Save Items
+/**
+ *  添加缓存
+ *
+ *  @param item 把缓存数据封装到YYKVStorageItem对象
+ */
+- (BOOL)saveItem:(YYKVStorageItem *)item;
+
+/**
+ *  添加缓存
+ *
+ *  @param key   缓存键值
+ *  @param value 缓存对象
+ */
+- (BOOL)saveItemWithKey:(NSString *)key value:(NSData *)value;
+
+/**
+ *  添加缓存
+ *
+ *  @param key          缓存键值
+ *  @param value        缓存对象
+ *  @param filename     缓存文件名称
+ *         filename     != null
+ *                          则用文件缓存value，并把`key`,`filename`,`extendedData`写入数据库
+ *         filename     == null
+ *                          缓存方式type：YYKVStorageTypeFile 不进行缓存
+ *                          缓存方式type：YYKVStorageTypeSQLite || YYKVStorageTypeMixed 数据库缓存
+ *  @param extendedData 缓存拓展数据
+ */
+- (BOOL)saveItemWithKey:(NSString *)key
+                  value:(NSData *)value
+               filename:(nullable NSString *)filename
+           extendedData:(nullable NSData *)extendedData;
+
+
+#pragma mark - Remove Items
+
+/**
+ *  删除缓存
+ */
+- (BOOL)removeItemForKey:(NSString *)key;
+- (BOOL)removeItemForKeys:(NSArray&lt;NSString *&gt; *)keys;
+
+/**
+ *  删除所有内存开销大于size的缓存
+ */
+- (BOOL)removeItemsLargerThanSize:(int)size;
+
+/**
+ *  删除所有时间比time小的缓存
+ */
+- (BOOL)removeItemsEarlierThanTime:(int)time;
+
+/**
+ *  减小缓存占的容量开销，使总缓存的容量开销值不大于maxSize(删除原则：LRU 最久未使用的缓存将先删除)
+ */
+- (BOOL)removeItemsToFitSize:(int)maxSize;
+
+/**
+ *  减小总缓存数量，使总缓存数量不大于maxCount(删除原则：LRU 最久未使用的缓存将先删除)
+ */
+- (BOOL)removeItemsToFitCount:(int)maxCount;
+
+/**
+ *  清空所有缓存
+ */
+- (BOOL)removeAllItems;
+- (void)removeAllItemsWithProgressBlock:(nullable void(^)(int removedCount, int totalCount))progress
+                               endBlock:(nullable void(^)(BOOL error))end;
+
+
+#pragma mark - Get Items
+
+/**
+ *  读取缓存
+ */
+- (nullable YYKVStorageItem *)getItemForKey:(NSString *)key;
+- (nullable YYKVStorageItem *)getItemInfoForKey:(NSString *)key;
+- (nullable NSData *)getItemValueForKey:(NSString *)key;
+- (nullable NSArray&lt;YYKVStorageItem *&gt; *)getItemForKeys:(NSArray&lt;NSString *&gt; *)keys;
+- (nullable NSArray&lt;YYKVStorageItem *&gt; *)getItemInfoForKeys:(NSArray&lt;NSString *&gt; *)keys;
+- (nullable NSDictionary&lt;NSString *, NSData *&gt; *)getItemValueForKeys:(NSArray&lt;NSString *&gt; *)keys;
+
+#pragma mark - Get Storage Status
+
+/**
+ *  判断当前key是否有对应的缓存
+ */
+- (BOOL)itemExistsForKey:(NSString *)key;
+
+/**
+ *  获取缓存总数量
+ */
+- (int)getItemsCount;
+
+/**
+ *  获取缓存总内存开销
+ */
+- (int)getItemsSize;
+
+@end
+
+NS_ASSUME_NONNULL_END</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>YYKVStorage.m方法结构图(私有方法)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../YYCacheDoc/295346-d0a6fbbdd66aa700.png" alt="YYKVStorage.m方法结构图">
+</div>
+</div>
+<div class="paragraph">
+<p>YYKVStorage.m方法结构图(公开方法)</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../YYCacheDoc/295346-e798ca052a43c013.png" alt="YYKVStorage.m方法结构图">
+</div>
+</div>
+<div class="paragraph">
+<p>YYKVStorage.m方法实现</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><span class="red">添加</span></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 添加缓存
+- (BOOL)saveItemWithKey:(NSString *)key value:(NSData *)value filename:(NSString *)filename extendedData:(NSData *)extendedData {
+    if (key.length == 0 || value.length == 0) return NO;
+
+    if (_type == YYKVStorageTypeFile &amp;&amp; filename.length == 0) {
+        //** `缓存方式为YYKVStorageTypeFile(文件缓存)`并且`未传缓存文件名`则不缓存(忽略) **
+        return NO;
+    }
+
+    if (filename.length) {
+        //** 存在文件名则用文件缓存，并把`key`,`filename`,`extendedData`写入数据库 **
+
+        // 缓存数据写入文件
+        if (![self _fileWriteWithName:filename data:value]) {
+            return NO;
+        }
+        // 把`key`,`filename`,`extendedData`写入数据库,存在filenam,则不把value缓存进数据库
+        if (![self _dbSaveWithKey:key value:value fileName:filename extendedData:extendedData]) {
+            // 如果数据库操作失败，删除之前的文件缓存
+            [self _fileDeleteWithName:filename];
+            return NO;
+        }
+        return YES;
+    } else {
+
+        if (_type != YYKVStorageTypeSQLite) {
+            // ** 缓存方式：非数据库 **
+
+            // 根据缓存key查找缓存文件名
+            NSString *filename = [self _dbGetFilenameWithKey:key];
+            if (filename) {
+                // 删除文件缓存
+                [self _fileDeleteWithName:filename];
+            }
+        }
+        // 把缓存写入数据库
+        return [self _dbSaveWithKey:key value:value fileName:nil extendedData:extendedData];
+    }
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 把data写入文件
+- (BOOL)_fileWriteWithName:(NSString *)filename data:(NSData *)data {
+    // 拼接文件路径
+    NSString *path = [_dataPath stringByAppendingPathComponent:filename];
+    // 写入文件
+    return [data writeToFile:path atomically:NO];
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 写入数据库
+- (BOOL)_dbSaveWithKey:(NSString *)key value:(NSData *)value fileName:(NSString *)fileName extendedData:(NSData *)extendedData {
+
+    // 执行sql语句
+    NSString *sql = @"insert or replace into manifest (key, filename, size, inline_data, modification_time, last_access_time, extended_data) values (?1, ?2, ?3, ?4, ?5, ?6, ?7);";
+    // 所有sql执行前，都必须能run
+    sqlite3_stmt *stmt = [self _dbPrepareStmt:sql];
+    if (!stmt) return NO;
+
+    // 时间
+    int timestamp = (int)time(NULL);
+    // 绑定参数值
+    sqlite3_bind_text(stmt, 1, key.UTF8String, -1, NULL);
+    sqlite3_bind_text(stmt, 2, fileName.UTF8String, -1, NULL);
+    sqlite3_bind_int(stmt, 3, (int)value.length);
+    if (fileName.length == 0) {
+        // fileName为null时，缓存value
+        sqlite3_bind_blob(stmt, 4, value.bytes, (int)value.length, 0);
+    } else {
+        // fileName不为null时，不缓存value
+        sqlite3_bind_blob(stmt, 4, NULL, 0, 0);
+    }
+    sqlite3_bind_int(stmt, 5, timestamp);
+    sqlite3_bind_int(stmt, 6, timestamp);
+    sqlite3_bind_blob(stmt, 7, extendedData.bytes, (int)extendedData.length, 0);
+
+    // 执行操作
+    int result = sqlite3_step(stmt);
+    if (result != SQLITE_DONE) {
+        //** 未完成执行数据库 **
+
+        // 输出错误logs
+        if (_errorLogsEnabled) NSLog(@"%s line:%d sqlite insert error (%d): %s", __FUNCTION__, __LINE__, result, sqlite3_errmsg(_db));
+        return NO;
+    }
+    return YES;
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 将sql编译成stmt
+- (sqlite3_stmt *)_dbPrepareStmt:(NSString *)sql {
+    if (![self _dbCheck] || sql.length == 0 || !_dbStmtCache) return NULL;
+    // 从_dbStmtCache字典里取之前编译过sql的stmt(优化)
+    sqlite3_stmt *stmt = (sqlite3_stmt *)CFDictionaryGetValue(_dbStmtCache, (__bridge const void *)(sql));
+    if (!stmt) {
+        // 将sql编译成stmt
+        int result = sqlite3_prepare_v2(_db, sql.UTF8String, -1, &amp;stmt, NULL);
+        if (result != SQLITE_OK) {
+            //** 未完成执行数据库 **
+
+            // 输出错误logs
+            if (_errorLogsEnabled) NSLog(@"%s line:%d sqlite stmt prepare error (%d): %s", __FUNCTION__, __LINE__, result, sqlite3_errmsg(_db));
+            return NULL;
+        }
+        // 将新的stmt缓存到字典
+        CFDictionarySetValue(_dbStmtCache, (__bridge const void *)(sql), stmt);
+    } else {
+        // 重置stmt状态
+        sqlite3_reset(stmt);
+    }
+    return stmt;
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 删除文件
+- (BOOL)_fileDeleteWithName:(NSString *)filename {
+    NSString *path = [_dataPath stringByAppendingPathComponent:filename];
+    return [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 从数据库查找文件名
+- (NSString *)_dbGetFilenameWithKey:(NSString *)key {
+    // 准备执行sql
+    NSString *sql = @"select filename from manifest where key = ?1;";
+    sqlite3_stmt *stmt = [self _dbPrepareStmt:sql];
+    if (!stmt) return nil;
+    // 绑定参数
+    sqlite3_bind_text(stmt, 1, key.UTF8String, -1, NULL);
+    // 执行操作
+    int result = sqlite3_step(stmt);
+
+    if (result == SQLITE_ROW) {
+        //** 存在可读的row **
+
+        // 取出stmt中的数据
+        char *filename = (char *)sqlite3_column_text(stmt, 0);
+        if (filename &amp;&amp; *filename != 0) {
+            // 转utf8 string
+            return [NSString stringWithUTF8String:filename];
+        }
+    } else {
+        if (result != SQLITE_DONE) {
+            //** 未完成执行数据库 **
+
+            // 输出错误logs
+            if (_errorLogsEnabled) NSLog(@"%s line:%d sqlite query error (%d): %s", __FUNCTION__, __LINE__, result, sqlite3_errmsg(_db));
+        }
+    }
+    return nil;
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><span class="red">删除</span></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 删除缓存
+- (BOOL)removeItemForKey:(NSString *)key {
+    if (key.length == 0) return NO;
+
+    // 判断缓存方式
+    switch (_type) {
+        case YYKVStorageTypeSQLite: {
+            //** 数据库缓存 **
+
+            // 删除数据库记录
+            return [self _dbDeleteItemWithKey:key];
+        } break;
+        case YYKVStorageTypeFile:
+        case YYKVStorageTypeMixed: {
+            //** 数据库缓存 或 文件缓存 **
+
+            // 查找缓存文件名
+            NSString *filename = [self _dbGetFilenameWithKey:key];
+            if (filename) {
+                // 删除文件缓存
+                [self _fileDeleteWithName:filename];
+            }
+            // 删除数据库记录
+            return [self _dbDeleteItemWithKey:key];
+        } break;
+        default: return NO;
+    }
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 删除数据库记录
+- (BOOL)_dbDeleteItemWithKey:(NSString *)key {
+    // 准备执行sql
+    NSString *sql = @"delete from manifest where key = ?1;";
+    sqlite3_stmt *stmt = [self _dbPrepareStmt:sql];
+    if (!stmt) return NO;
+
+    // 绑定参数
+    sqlite3_bind_text(stmt, 1, key.UTF8String, -1, NULL);
+    // 执行操作
+    int result = sqlite3_step(stmt);
+    if (result != SQLITE_DONE) {
+        //** 未完成执行数据库 **
+
+        // 输出错误logs
+        if (_errorLogsEnabled) NSLog(@"%s line:%d db delete error (%d): %s", __FUNCTION__, __LINE__, result, sqlite3_errmsg(_db));
+        return NO;
+    }
+    return YES;
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><span class="red">查找</span></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 查找缓存
+- (YYKVStorageItem *)getItemForKey:(NSString *)key {
+    if (key.length == 0) return nil;
+    // 数据库查询
+    YYKVStorageItem *item = [self _dbGetItemWithKey:key excludeInlineData:NO];
+    if (item) {
+        //** 数据库存在记录 **
+
+        // 更新操作时间
+        [self _dbUpdateAccessTimeWithKey:key];
+        if (item.filename) {
+            //** 存在文件名 **
+
+            // 读入文件
+            item.value = [self _fileReadWithName:item.filename];
+            if (!item.value) {
+                //** 未找到文件 **
+
+                // 删除数据库记录
+                [self _dbDeleteItemWithKey:key];
+                item = nil;
+            }
+        }
+    }
+    return item;
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 数据库查询
+- (YYKVStorageItem *)_dbGetItemWithKey:(NSString *)key excludeInlineData:(BOOL)excludeInlineData {
+    // 准备执行sql
+    NSString *sql = excludeInlineData ? @"select key, filename, size, modification_time, last_access_time, extended_data from manifest where key = ?1;" : @"select key, filename, size, inline_data, modification_time, last_access_time, extended_data from manifest where key = ?1;";
+    sqlite3_stmt *stmt = [self _dbPrepareStmt:sql];
+    if (!stmt) return nil;
+
+    // 绑定参数
+    sqlite3_bind_text(stmt, 1, key.UTF8String, -1, NULL);
+
+    YYKVStorageItem *item = nil;
+    // 执行操作
+    int result = sqlite3_step(stmt);
+    if (result == SQLITE_ROW) {
+        //** 存在可读的row **
+
+        // 获取YYKVStorageItem
+        item = [self _dbGetItemFromStmt:stmt excludeInlineData:excludeInlineData];
+    } else {
+        if (result != SQLITE_DONE) {
+            //** 未完成执行数据库 **
+
+            // 输出错误logs
+            if (_errorLogsEnabled) NSLog(@"%s line:%d sqlite query error (%d): %s", __FUNCTION__, __LINE__, result, sqlite3_errmsg(_db));
+        }
+    }
+    return item;
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 转换模型YYKVStorageItem
+- (YYKVStorageItem *)_dbGetItemFromStmt:(sqlite3_stmt *)stmt excludeInlineData:(BOOL)excludeInlineData {
+    int i = 0;
+    // 取出数据
+    char *key = (char *)sqlite3_column_text(stmt, i++);
+    char *filename = (char *)sqlite3_column_text(stmt, i++);
+    int size = sqlite3_column_int(stmt, i++);
+    const void *inline_data = excludeInlineData ? NULL : sqlite3_column_blob(stmt, i);
+    int inline_data_bytes = excludeInlineData ? 0 : sqlite3_column_bytes(stmt, i++);
+    int modification_time = sqlite3_column_int(stmt, i++);
+    int last_access_time = sqlite3_column_int(stmt, i++);
+    const void *extended_data = sqlite3_column_blob(stmt, i);
+    int extended_data_bytes = sqlite3_column_bytes(stmt, i++);
+
+    // 赋值模型
+    YYKVStorageItem *item = [YYKVStorageItem new];
+    if (key) item.key = [NSString stringWithUTF8String:key];
+    if (filename &amp;&amp; *filename != 0) item.filename = [NSString stringWithUTF8String:filename];
+    item.size = size;
+    if (inline_data_bytes &gt; 0 &amp;&amp; inline_data) item.value = [NSData dataWithBytes:inline_data length:inline_data_bytes];
+    item.modTime = modification_time;
+    item.accessTime = last_access_time;
+    if (extended_data_bytes &gt; 0 &amp;&amp; extended_data) item.extendedData = [NSData dataWithBytes:extended_data length:extended_data_bytes];
+    return item;
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_yydiskcache">YYDiskCache</h6>
+<div class="ulist">
+<ul>
+<li>
+<p><span class="red">初始化</span></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (instancetype)initWithPath:(NSString *)path
+             inlineThreshold:(NSUInteger)threshold {
+    self = [super init];
+    if (!self) return nil;
+
+    // 1.根据path先从缓存里面找YYDiskCache(未找到再去重新创建实例)
+    YYDiskCache *globalCache = _YYDiskCacheGetGlobal(path);
+    if (globalCache) return globalCache;
+
+    // 2.重新创建实例
+
+    // 2.1缓存方式
+    YYKVStorageType type;
+    if (threshold == 0) {
+        type = YYKVStorageTypeFile;
+    } else if (threshold == NSUIntegerMax) {
+        type = YYKVStorageTypeSQLite;
+    } else {
+        type = YYKVStorageTypeMixed;
+    }
+    // 2.2实例化YYKVStorage对象(YYKVStorage上面已分析，YYDiskCache的缓存实现都在YKVStorage)
+    YYKVStorage *kv = [[YYKVStorage alloc] initWithPath:path type:type];
+    if (!kv) return nil;
+
+    // 2.3初始化数据
+    _kv = kv;
+    _path = path;
+    _lock = dispatch_semaphore_create(1);
+    _queue = dispatch_queue_create("com.ibireme.cache.disk", DISPATCH_QUEUE_CONCURRENT);
+    _inlineThreshold = threshold;
+    _countLimit = NSUIntegerMax;
+    _costLimit = NSUIntegerMax;
+    _ageLimit = DBL_MAX;
+    _freeDiskSpaceLimit = 0;
+    _autoTrimInterval = 60;
+
+    [self _trimRecursively];
+    // 2.4缓存self
+    _YYDiskCacheSetGlobal(self);
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_appWillBeTerminated) name:UIApplicationWillTerminateNotification object:nil];
+    return self;
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 获取已经缓存的YYDiskCache对象
+static YYDiskCache *_YYDiskCacheGetGlobal(NSString *path) {
+    if (path.length == 0) return nil;
+    // 初始化字典(用来缓存YYDiskCache对象)与创建锁
+    _YYDiskCacheInitGlobal();
+    // 加锁
+    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);
+    id cache = [_globalInstances objectForKey:path];
+    // 解锁
+    dispatch_semaphore_signal(_globalInstancesLock);
+    return cache;
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 初始化字典(用来缓存YYDiskCache对象)与创建锁
+static void _YYDiskCacheInitGlobal() {
+    static dispatch_once_t onceToken;
+    dispatch_once(&amp;onceToken, ^{
+        // 创建一把锁
+        _globalInstancesLock = dispatch_semaphore_create(1);
+        // 初始化字典
+        _globalInstances = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsWeakMemory capacity:0];
+    });
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 保存新的YYDiskCache
+static void _YYDiskCacheSetGlobal(YYDiskCache *cache) {
+    if (cache.path.length == 0) return;
+    _YYDiskCacheInitGlobal();
+    dispatch_semaphore_wait(_globalInstancesLock, DISPATCH_TIME_FOREVER);
+    [_globalInstances setObject:cache forKey:cache.path];
+    dispatch_semaphore_signal(_globalInstancesLock);
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><span class="red">添加缓存</span></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 添加缓存
+- (void)setObject:(id&lt;NSCoding&gt;)object forKey:(NSString *)key {
+    if (!key) return;
+    if (!object) {
+        //** 缓存对象为null **
+
+        // 删除缓存
+        [self removeObjectForKey:key];
+        return;
+    }
+
+    NSData *extendedData = [YYDiskCache getExtendedDataFromObject:object];
+    NSData *value = nil;
+    // 你可以customArchiveBlock外部归档数据
+    if (_customArchiveBlock) {
+        value = _customArchiveBlock(object);
+    } else {
+        @try {
+            // 归档数据
+            value = [NSKeyedArchiver archivedDataWithRootObject:object];
+        }
+        @catch (NSException *exception) {
+            // nothing to do...
+        }
+    }
+    if (!value) return;
+    NSString *filename = nil;
+    if (_kv.type != YYKVStorageTypeSQLite) {
+        // ** 缓存类型非YYKVStorageTypeSQLite **
+        if (value.length &gt; _inlineThreshold) {
+            // ** 缓存对象大于_inlineThreshold值则用文件缓存 **
+
+            // 生成文件名
+            filename = [self _filenameForKey:key];
+        }
+    }
+    // 加锁
+    Lock();
+    // 缓存数据(此方法上面讲过)
+    [_kv saveItemWithKey:key value:value filename:filename extendedData:extendedData];
+    // 解锁
+    Unlock();
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>其他查找，删除都类似，就不一一分析了，到这里，我们知道了，YYCache读取缓存调用了方法：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (id&lt;NSCoding&gt;)objectForKey:(NSString *)key {
+    if (!key) return nil;
+    Lock();
+    YYKVStorageItem *item = [_kv getItemForKey:key];
+    Unlock();
+    if (!item.value) return nil;
+
+    id object = nil;
+    //如果缓存对象没有遵循NSCoding协议，则用此Block来解档缓存对象
+    if (_customUnarchiveBlock) {
+        object = _customUnarchiveBlock(item.value);
+    } else {
+        @try {
+            //解档
+            object = [NSKeyedUnarchiver unarchiveObjectWithData:item.value];
+        }
+        @catch (NSException *exception) {
+            // nothing to do...
+        }
+    }
+    //如果缓存对象和拓展数据数据都存在，则将拓展数据存入对象
+    if (object &amp;&amp; item.extendedData) {
+        [YYDiskCache setExtendedData:item.extendedData toObject:object];
+    }
+    return object;
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>结合上面我们看出底层通过YYKVStorage对象调用- (YYKVStorageItem *)getItemForKey:(NSString *)key方法，返回YYKVStorageItem对象，
+然后再将缓存从YYKVStorageItem的属性value中取出来。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="___9">写缓存</h4>
+<div class="paragraph">
+<p>写入缓存的整个流程如图：</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../YYCacheDoc/写入缓存.png" alt="写入缓存">
+</div>
+</div>
+<div class="sect4">
+<h5 id="__strong_memorycache_strong_2"><strong>MemoryCache</strong></h5>
+<div class="paragraph">
+<p>memoryCache里写缓存调用的是：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>// 添加缓存
+- (void)setObject:(id)object forKey:(id)key withCost:(NSUInteger)cost {
+    if (!key) return;
+    if (!object) {
+        // ** 缓存对象为空，移除缓存 **
+        [self removeObjectForKey:key];
+        return;
+    }
+    // 加锁
+    pthread_mutex_lock(&amp;_lock);
+     // 根据Key查找缓存
+    _YYLinkedMapNode *node = CFDictionaryGetValue(_lru-&gt;_dic, (__bridge const void *)(key));
+    // 当前时间
+    NSTimeInterval now = CACurrentMediaTime();
+    if (node) {
+        //** 之前有缓存，更新旧缓存 **
+        // 更新值
+        _lru-&gt;_totalCost -= node-&gt;_cost;
+        _lru-&gt;_totalCost += cost;
+        node-&gt;_cost = cost;
+        node-&gt;_time = now;
+        node-&gt;_value = object;
+        // 移动节点到链表表头
+        [_lru bringNodeToHead:node];
+    } else {
+        //** 之前未有缓存，添加新缓存 **
+        // 新建节点
+        node = [_YYLinkedMapNode new];
+        node-&gt;_cost = cost;
+        node-&gt;_time = now;
+        node-&gt;_key = key;
+        node-&gt;_value = object;
+        // 添加节点到表头
+        [_lru insertNodeAtHead:node];
+    }
+    if (_lru-&gt;_totalCost &gt; _costLimit) {
+        // ** 总缓存开销大于设定的开销 **
+
+        // 异步清理最久未使用的缓存
+        dispatch_async(_queue, ^{
+            [self trimToCost:_costLimit];
+        });
+    }
+    if (_lru-&gt;_totalCount &gt; _countLimit) {
+        // ** 总缓存数量大于设定的数量 **
+
+        // 移除链表尾节点(最久未访问的缓存)
+        _YYLinkedMapNode *node = [_lru removeTailNode];
+        if (_lru-&gt;_releaseAsynchronously) {
+            dispatch_queue_t queue = _lru-&gt;_releaseOnMainThread ? dispatch_get_main_queue() : YYMemoryCacheGetReleaseQueue();
+            dispatch_async(queue, ^{
+                [node class]; //hold and release in queue
+            });
+        } else if (_lru-&gt;_releaseOnMainThread &amp;&amp; !pthread_main_np()) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [node class]; //hold and release in queue
+            });
+        }
+    }
+    pthread_mutex_unlock(&amp;_lock);
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>也是操作双向链表和哈希表来实现的，结合上面的关于双向链表的操作分析，之前有缓存的话，更新上次访问该缓存的时间，然后移动存储着该缓存的节点至链表表头
+，如果之前没有缓存的话，则添加新缓存，添加新节点到链表表头。</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="__strong_diskcache_strong_2"><strong>DiskCache</strong></h5>
+<div class="paragraph">
+<p>diskCache里写缓存调用的是：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>- (void)setObject:(id&lt;NSCoding&gt;)object forKey:(NSString *)key {
+    if (!key) return;
+    if (!object) {
+        //** 缓存对象为null **
+
+        // 删除缓存
+        [self removeObjectForKey:key];
+        return;
+    }
+
+    NSData *extendedData = [YYDiskCache getExtendedDataFromObject:object];
+    NSData *value = nil;
+    // 你可以用customArchiveBlock外部归档数据
+    if (_customArchiveBlock) {
+        value = _customArchiveBlock(object);
+    } else {
+        // 归档数据
+        @try {
+            value = [NSKeyedArchiver archivedDataWithRootObject:object];
+        }
+        @catch (NSException *exception) {
+            // nothing to do...
+        }
+    }
+    if (!value) return;
+    NSString *filename = nil;
+    if (_kv.type != YYKVStorageTypeSQLite) {
+        // ** 缓存类型非YYKVStorageTypeSQLite **
+        if (value.length &gt; _inlineThreshold) {
+            // ** 缓存对象大于_inlineThreshold值则用文件缓存 **
+
+            // 生成文件名
+            filename = [self _filenameForKey:key];
+        }
+    }
+
+    // 加锁
+    Lock();
+    // 缓存数据
+    [_kv saveItemWithKey:key value:value filename:filename extendedData:extendedData];
+    // 解锁
+    Unlock();
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>如果_customArchiveBlock存在则用customArchiveBlock外部归档数据，否则就对数据进行普通归档。得到归档后的数据，进行判断，如果缓存类型非YYKVStorageTypeSQLite且缓存对象大于_inlineThreshold值则还要进行文件缓存，
+最后统一将数据都缓存进数据库。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="___10">总结</h3>
+<div class="paragraph">
+<p>一套源码读下来，收获不小，只要认真去思考，就可以发现大神们的构思有很多巧妙之处，比如YYCache在存取缓存时使用了OSSpinLock 自旋同步锁，在不损失性能的同时保证了线程安全。本篇中若有理解不到位或有误的地方，欢迎感兴趣的童鞋指出来，一起交流学习，共同进步。</p>
+</div>
+</div>
+</div>
+</div>
+        </div>
+      </div>
+    </body>
+  </html>
